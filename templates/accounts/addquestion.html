@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+{% block content %}
+<link rel="stylesheet" href='../static/style2.css'>
+<div class="container container">
+    <h2 align="center">Add Question for NEET-UG</h2>
+    <form action="" method="POST" class="form-signin">
+        {% csrf_token %}
+        <label for="class">Class:</label>
+        <select name="class" id="class" class="form-control">
+            <option value="11">11</option>
+            <option value="12">12</option>
+        </select>
+
+        <label for="subject">Subject:</label>
+        <select name="subject" id="subject" class="form-control">
+            <option value="Physics">Physics</option>
+            <option value="Chemistry">Chemistry</option>
+            <option value="Biology">Biology</option>
+        </select>
+
+        <label for="chapter">Chapter:</label>
+        <input type="text" name="chapter" id="chapter" class="form-control">
+
+        <label for="topic">Topic:</label>
+        <input type="text" name="topic" id="topic" class="form-control">
+
+        <label for="question">Question text:</label>
+        <input type="text" name="question" id="question" class="form-control">
+
+        <label for="description">Description:</label><br>
+        <textarea name="description" id="description" rows="4" cols="50" class="form-control"></textarea>
+
+        <label for="diagram">Diagram/Illustration:</label>
+        <input type="file" name="diagram" id="diagram" class="form-control">
+
+        <label for="option_1">Option 1:</label>
+        <input type="text" name="option_1" id="option_1" class="form-control">
+
+        <label for="option_2">Option 2:</label>
+        <input type="text" name="option_2" id="option_2" class="form-control">
+
+        <label for="option_3">Option 3:</label>
+        <input type="text" name="option_3" id="option_3" class="form-control">
+
+        <label for="option_4">Option 4:</label>
+        <input type="text" name="option_4" id="option_4" class="form-control">
+
+        <label for="correct_option">Correct option:</label>
+        <select name="correct_option" id="correct_option" class="form-control">
+            <option value="option_1">Option 1</option>
+            <option value="option_2">Option 2</option>
+            <option value="option_3">Option 3</option>
+            <option value="option_4">Option 4</option>
+        </select>
+
+        <label for="pyq_year">PYQ Year:</label>
+        <input type="text" name="pyq_year" id="pyq_year" class="form-control">
+
+        <input type="submit" value="Submit">
+    </form>
+</div>
+
+{% endblock content %}

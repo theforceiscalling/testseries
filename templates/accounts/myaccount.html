@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+
+{% block content %}
+<title>My Account</title>
+<div class="container">
+ Registered Email: <b>{{user.email}}</b>
+ {% if user.is_student == True %}
+ (Student Account)
+ {% elif user.is_teacher == True %}
+(Teacher Account)
+ {% comment %} {% elif user.is_student or user.is_teacher == False %}
+ (Standard Account) {% endcomment %}
+ {% endif %}
+ <br/>
+ Add Questions :: <a href="add-question">Click Here</a>.<br/>
+
+ 
+ <!-- Bootstrap CSS -->
+ <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+
+<div class="container mt-5">
+ <h1 class="text-center">My Account</h1>
+
+ <h2 class="mt-4">My Test Scores and Attempts</h2>
+ <div class="table-responsive">
+     <table class="table table-bordered table-striped">
+         <thead class="thead-dark">
+             <tr>
+                 <th scope="col">Test Name</th>
+                 <th scope="col">Score</th>
+             </tr>
+         </thead>
+         <tbody>
+             {% for score in test_scores %}
+                 <tr>
+                     <td>{{ score.test.name }}</td>
+                     <td>{{ score.score }}</td>
+                 </tr>
+             {% empty %}
+                 <tr>
+                     <td colspan="2" class="text-center">No scores yet.</td>
+                 </tr>
+             {% endfor %}
+         </tbody>
+     </table>
+ </div>
+</div>
+
+<!-- Bootstrap JS and dependencies -->
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+<script>
+    function openLinkInNewTab(url) {
+        // Open the link in a new tab
+        window.open(url, '_blank');
+    }
+</script>
+<script>
+    $('.collapse').collapse()
+</script>
+</div>
+
+{% endblock content %}

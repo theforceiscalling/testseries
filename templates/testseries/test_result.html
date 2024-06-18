@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Result</title>
+</head>
+<body>
+    <h1>Test Result</h1>
+    <p>Score: {{ submission.score }}</p>
+    <h2>Answers:</h2>
+    <ul>
+        {% for answer in submission.answers.all %}
+        <li>{{ answer.question }} - {% if answer.is_correct %} Correct {% else %} Incorrect {% endif %}</li>
+        {% endfor %}
+    </ul>
+</body>
+</html>

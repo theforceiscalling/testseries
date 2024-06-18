@@ -1,0 +1,12 @@
+{% include 'header.html' %}
+
+{% for message in messages %}
+      <div class="container alert alert-{{message.tags}}" align="center">{{message}}</div>
+{% endfor %}
+
+{% block content %}
+
+{% endblock content %}
+
+
+{% include 'footer.html' %}

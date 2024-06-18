@@ -1,0 +1,35 @@
+{% include 'header.html' %}
+<div class="container">
+  <div class="alert alert-dark"><center><b>NOTICE: </b>Test Series is under 100% discount till 30th November, 2024!</center></div>
+  <div class="card-deck mb-3 text-center">      
+    
+    <table class="table">
+      <thead class="thead-dark">
+        <tr>
+          <th scope="col">#</th>
+          <th scope="col">Test Series</th>
+          <th scope="col">Starts</th>
+          <th scope="col">Fees</th>
+          <th scope="col">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for testseries in ts %}
+        <tr>
+          <th scope="row">{{forloop.counter}}</th>
+          <td>{{testseries.name}}</td>
+          <td>{{testseries.start_date}}</td>
+          <td>₹ <s>{{testseries.fees}}</s> 0.00</td>
+          <td><a class="btn btn-primary btn-block" href='testseries/{{testseries.slug}}'>Apply</a></td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+
+
+
+  </div>
+  
+
+</div>
+{% include 'footer.html' %}

@@ -1,0 +1,10 @@
+{% include 'header.html' %}
+
+<div class="container container">
+  <p class="display-6" align="center">
+  {% if user.is_authenticated %}  
+    Hello {{user.phone_number}}! 
+  {% endif %}
+
+</div>
+{% include 'footer.html' %}

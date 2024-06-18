@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container container">
+    <p>Score: {{ submission.score }}</p>
+    <h2>Answers:</h2>
+    <ul>
+        {% for answer in submission.answers.all %}
+        <li>{{ answer.question }} - {% if answer.is_correct %} Correct {% else %} Incorrect {% endif %}</li>
+        {% endfor %}
+    </ul>
+
+
+{% comment %} <h1>Test Results (Test Code: {{ submission.test.test_code }})</h1>
+<div class="alert alert-info">
+<p>You scored <b>{{ score }}%</b> with <b>{{ correct_answers }}</b> correct answers out of <b>{{ total_questions }}</b> questions.</p>
+</div>
+{% if submission.answers.exists %}
+ <h2>Detailed Results</h2>
+<table class="table table-bordered">
+<thead>
+<tr>
+<th>Question</th>
+<th>Your Answer</th>
+<th>Correct Answer</th>
+</tr>
+</thead>
+<tbody>
+ {% for answer in submission.answers.all %}
+<tr>
+ <td>{{ answer.question.question_text }}</td>
+<td>{{ answer.selected_option.option_text }}</td>
+{% if answer.selected_option.id == answer.question.correct_option %}
+ <td class="text-success">Correct</td>
+{% else %}
+ <td class="text-danger">Incorrect</td>
+{% endif %}
+</tr>
+ {% endfor %}
+</tbody>
+</table>
+{% else %}
+<p>No answers found for this submission.</p>
+{% endif %} {% endcomment %}
+</div>
+{% endblock %}

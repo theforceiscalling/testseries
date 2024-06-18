@@ -1,0 +1,70 @@
+<!-- list_questions.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>List of Questions</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+</head>
+<body>
+<div class="container mt-5">
+    <h1>List of Questions</h1>
+    <div id="message"></div>
+    <div class="list-group">
+        {% for question in questions %}
+            <div class="list-group-item">
+                <h5>{{ question.question_text }}</h5>
+                <ul>
+                    {% for option in question.options.all %}
+                        <li>{{ option.option }}</li>
+                    {% endfor %}
+                </ul>
+                <div class="form-group">
+                    <label for="testSelect{{ question.id }}">Select Test:</label>
+                    <select id="testSelect{{ question.id }}" class="form-control">
+                        <option value="">--Select Test--</option>
+                        {% for test in tests %}
+                            <option value="{{ test.id }}">{{ test.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <button class="btn btn-primary" onclick="addToTest('{{ question.id }}', document.getElementById('testSelect{{ question.id }}').value)">Add to Test</button>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+
+<script>
+function addToTest(question_id, test_id) {
+    if (test_id === "") {
+        alert('Please select a test.');
+        return;
+    }
+    $.ajax({
+        type: 'POST',
+        url: '{% url "add_to_test" %}',
+        headers: {
+            'X-Requested-With': 'XMLHttpRequest',
+            'X-CSRFToken': '{{ csrf_token }}'
+        },
+        data: {
+            'question_id': question_id,
+            'test_id': test_id,
+        },
+        success: function(response) {
+            if (response.success) {
+                $('#message').html('<div class="alert alert-success">Question added to test successfully!</div>');
+            } else {
+                $('#message').html('<div class="alert alert-danger">Failed to add question to test: ' + response.error + '</div>');
+            }
+        },
+        error: function(xhr, status, error) {
+            $('#message').html('<div class="alert alert-danger">Failed to add question to test. Error: ' + error + '</div>');
+        }
+    });
+}
+</script>
+</body>
+</html>

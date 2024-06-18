@@ -1,0 +1,40 @@
+{% include 'header.html' %}
+<title>Student Login</title>
+{% load static %}
+<link rel="stylesheet" href="/static/style2.css">
+
+<div class="container container">
+<form method="POST" action="" class="form-signin">
+  {% csrf_token %}
+      <div class="text-center mb-4">
+        <h1 class="h3 mb-3 font-weight-normal">TestSeries Login</h1>
+      </div>
+
+
+      {% for message in messages %}
+      <div class="alert alert-{{message.tags}}"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-check-lg" viewBox="0 0 16 16">
+        <path d="M12.736 3.97a.733.733 0 0 1 1.047 0c.286.289.29.756.01 1.05L7.88 12.01a.733.733 0 0 1-1.065.02L3.217 8.384a.757.757 0 0 1 0-1.06.733.733 0 0 1 1.047 0l3.052 3.093 5.4-6.425a.247.247 0 0 1 .02-.022Z"/>
+      </svg> {{message}}</div>
+      {% endfor %}
+      
+      <div class="form-label-group">
+        <input name="email" type="email" id="inputEmail" class="form-control" placeholder="Email" required autofocus>
+        <label for="inputEmail">Email</label>
+      </div>
+
+      <div class="form-label-group">
+        <input name="password" type="password" id="inputPassword" class="form-control" placeholder="Password" required>
+        <label for="inputPassword">Password</label>
+      </div>
+
+      <div class="checkbox mb-3">
+        <label>
+          <input type="checkbox" value="remember-me"> Remember me
+        </label>
+      </div>
+      <button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
+      <p class="mt-5 mb-3 text-muted text-center">If you do not have an account, you can <a href="{% url "registerstudent" %}">create an account</a>.</p>
+      <p class="mt-5 mb-3 text-muted text-center">We respect your privacy. We do not deal with any third parties.</p>
+    </form>
+  </div>
+{% include 'footer.html' %}

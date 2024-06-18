@@ -1,0 +1,23 @@
+{% include 'header.html' %}
+
+<div class="container container">
+  <p class="display-6" align="center">
+  {% if user.is_authenticated %}  
+    Hello ! 
+  {% endif %}
+  Choose your desired field of study<br/>
+  
+  <!-- {% for feature in features %}
+  <b>{{feature.name}}</b>: {{feature.details}}<br/>
+  {% endfor %}
+  </p> -->
+
+  <div class="d-flex gap-2 justify-content-center py-5">
+    {% for item in exam %}
+    <button class="btn-lg btn-primary d-inline-flex align-items-center" type="button" onclick="document.location.href='{{item.exam_code}}';">
+      {{item.exam_name}}
+    </button>
+    &nbsp;
+    {% endfor %}
+</div>
+{% include 'footer.html' %}

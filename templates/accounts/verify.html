@@ -1,0 +1,6 @@
+<form name="verification" action="" method="POST">
+    {% csrf_token %}
+Enter Verification Code: <br/>
+<input type="text" name="verification_code">
+<button type="submit">Verify</button>
+</form>

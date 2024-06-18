@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ test }}</title>
+</head>
+<body>
+    <h1>{{ test }}</h1>
+    <form method="post" action="{% url 'submit_test' test.id %}">
+        {% csrf_token %}
+        {% for question in questions %}
+        <h3>{{ question.question_text }}</h3>
+        {% if question.diagram_or_illustration %}
+        <img src="{{ question.diagram_or_illustration.url }}" alt="Diagram/Illustration">
+        {% endif %}
+        {% for option in question.option_set.all %}
+        <input type="radio" id="{{ question.id }}" name="{{ question.id }}" value="{{ option.id }}">
+        <label for="{{ option.id }}">{{ option.option_text }}</label><br>
+        {% endfor %}
+        <br>
+        {% endfor %}
+        <input type="submit" value="Submit">
+    </form>
+</body>
+</html>

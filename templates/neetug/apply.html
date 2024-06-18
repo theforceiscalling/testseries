@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container container">
+      
+    {% comment %} {% for data in testseries_data %} {% endcomment %}
+    TestSeries: {{testseries_data.name}}<br/>
+    Details: {{testseries_data.description}}<br/>
+    Fees (Lumpsum): {{testseries_data.fees}}<br/>
+    <div class="checkbox mb-3">
+    <form action="" method="POST">
+        {% csrf_token %}
+        <input type="hidden" value="{{testseries_data.testseries_code}}" name="testseries_code">
+        <input class="btn btn-lg btn-primary btn-block" type="submit" value="Buy Now" name="purchase">
+    </form></div>   
+    {% comment %} {% endfor %} {% endcomment %}
+</div>
+
+{% endblock content %}

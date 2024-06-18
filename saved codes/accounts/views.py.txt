@@ -1,0 +1,201 @@
+from django.shortcuts import render, redirect
+from django.contrib.auth.models import User, auth
+from django.contrib import messages
+from django.contrib.auth import authenticate, get_user_model
+from django.contrib.auth.decorators import login_required
+from .models import CustomUser, user_email_verification_data
+# from home.models import testseries
+from django.contrib.auth import get_user_model
+# from plus.models import Purchase
+from neetug.models import *
+import random
+from django.core.mail import EmailMessage
+from neetug.models import neetug_question, neetug_option
+
+User = get_user_model()
+
+# Create your views here.
+
+def index(request):
+    if request.user.is_authenticated:
+        return redirect('myaccount')
+    else:
+        messages.warning(request, "You need to login first!")
+        return redirect('login')
+
+def registerteacher(request):
+    if request.method == 'POST':
+        email = request.POST['email']
+        # email = request.POST['email']
+        password1 = request.POST['password1']
+        password2 = request.POST['password2']
+        role = request.POST['role']
+        if password1 == password2:
+            if CustomUser.objects.filter(email=email).exists():
+                messages.info(request, 'Email already used')
+                return redirect('registerstudent')
+            # elif CustomUser.objects.filter(email=email).exists():
+            #     messages.info(request, 'Username already used')
+            #     return redirect('registerstudent')
+            else:
+                # if role == "Student":
+                #     is_student = True
+                #     is_teacher = False
+                if role == "Teacher":
+                    is_student = False
+                    is_teacher = True
+                user = CustomUser.objects.create_user(password=password1, email=email, is_teacher=is_teacher)
+                user.save();
+                messages.success(request, 'Yay! We have created your teacher account! Proceed to login.')
+                return redirect('login')
+        else:
+            messages.info(request, 'Password mismatch!')
+            return redirect('registerteacher')
+    else:
+        return render(request, 'registerteacher.html')
+    
+def registerstudent(request):
+    if request.method == 'POST':
+        email = request.POST['email']
+        # email = request.POST['email']
+        password1 = request.POST['password1']
+        password2 = request.POST['password2']
+        if password1 == password2:
+            if CustomUser.objects.filter(email=email).exists():
+                messages.info(request, 'Email already used')
+                return redirect('registerstudent')
+            # elif CustomUser.objects.filter(email=email).exists():
+            #     messages.info(request, 'Username already used')
+            #     return redirect('registerstudent')
+            else:
+                user = CustomUser.objects.create_user(password=password1, email=email)
+                user.save();
+                messages.success(request, "Yay! We have created your account. Email verification is pending, kindly check your mailbox for verification mail. Remember to check your spam as well.")
+                if CustomUser.objects.filter(email=email):
+                    code = ''.join(random.choices('0123456789', k=6)) #Generates random 6 digit code
+                    
+                    CustomUser.objects.filter(email=email).update(is_student=True, is_teacher=False, is_active=False)
+                    user_id = CustomUser.objects.get(email=email)
+                    user_email_verification_data.objects.create(user_id=user_id, verification_code=code)
+                    email = EmailMessage('TestSeries Verification', 'Your Verification code is: '+code, 'support@testseries.online',['support@testseries.online'])
+                    if email.send():
+                        print("mail was sent")
+                    else:
+                        print("Mail wasn't sent")
+                    messages.success(request, 'Student Account Offers have been applied!')
+                else:
+                    messages.info(request, "We were unable to update student account status.")
+                return redirect('login')
+        else:
+            messages.info(request, 'Password mismatch!')
+            return redirect('registerstudent')
+    else:
+        return render(request, 'registerstudent.html')
+
+def login(request):
+    if request.method == 'POST':
+        email = request.POST['email']
+        password = request.POST['password']
+        user = auth.authenticate(email=email, password=password)
+        if user is not None:
+                auth.login(request, user)
+                return redirect('myaccount')
+        else:
+            if not request.user.is_active:
+                messages.warning(request, 'Account not verified. Kindly check your mailbox for verification mail. Remember to check in spam as well!')
+                return redirect('login')
+            else:
+                messages.warning(request, 'Invalid combination!')
+                return redirect('login')
+    else:
+        return render(request, 'login.html')
+
+def logout(request):
+    auth.logout(request)
+    return redirect('/')
+
+def myaccount(request):
+    if request.user.is_authenticated:
+        user_id = request.user.user_id
+        user_scores = UserScore.objects.filter(user=request.user)
+        user_attempts = UserResponse.objects.filter(user=request.user)
+        context = {
+        'test_scores': user_scores,
+        'test_attempts': user_attempts
+        }
+        return render(request, 'myaccount.html', context)
+    else:
+        messages.warning(request, "You need to login first!")
+        return redirect('login')
+    
+def verify(request):
+    if request.method == "POST":
+        code = request.POST['verification_code']
+        is_verified = user_email_verification_data.objects.get(verification_code=code)
+        if not is_verified:
+            messages.warning(request, "Verification failed!")
+            return redirect('verify.html')
+        else:
+            user = is_verified.user_id
+            CustomUser.objects.filter(email=user).update(is_active=True)
+            
+    else:
+        return render(request, 'verify.html')
+
+import random
+def generate_random_code():
+    return ''.join(random.choices('0123456789', k=6))
+
+def addquestion(request):
+    if request.method == "POST":
+        subject = request.POST['subject']
+        from_class = request.POST['class']
+        chapter = request.POST['chapter']
+        topic = request.POST['topic']
+        question_text = request.POST['question']
+        question_description = request.POST['description']
+        diagram = request.POST['diagram']
+        pyq_year = request.POST['pyq_year']
+        option_1 = request.POST['option_1']
+        option_2 = request.POST['option_2']
+        option_3 = request.POST['option_3']
+        option_4 = request.POST['option_4']
+        option_1_val = False
+        option_2_val = False
+        option_3_val = False
+        option_4_val = False
+        correct_option = request.POST['correct_option']
+        if correct_option == "option_1":
+                option_1_val = True
+        elif correct_option == "option_2":
+                option_2_val = True
+        elif correct_option == "option_3":
+                option_3_val = True
+        elif correct_option == "option_4":
+                option_4_val = True
+        
+        question_code = ''.join(random.choices('0123456789', k=6))
+        create_question = neetug_question.objects.create(question_type="MCQ", subject=subject, from_class=from_class, chapter=chapter, topic=topic, question_text=question_text, description=question_description, diagram_or_illustration=diagram, pyq_Last_asked_in=pyq_year, question_code=question_code)
+        create_question.save()
+        create_option_1 = neetug_option.objects.create(question=create_question, option=option_1, is_correct=option_1_val)
+        create_option_2 = neetug_option.objects.create(question=create_question, option=option_2, is_correct=option_2_val)
+        create_option_3 = neetug_option.objects.create(question=create_question, option=option_3, is_correct=option_3_val)
+        create_option_4 = neetug_option.objects.create(question=create_question, option=option_4, is_correct=option_4_val)
+        create_option_1.save()  
+        create_option_2.save()  
+        create_option_3.save()  
+        create_option_4.save()
+        messages.success(request, "Question has been added. Reference number: "+question_code)
+        return render(request, 'addquestion.html')
+    else:
+        return render(request, 'addquestion.html')
+    
+def addquestion_to_test(request):
+    # questions = neetug_question.objects.all()
+    # options = questions.neetug_options_set.all()
+    questions = neetug_question.objects.prefetch_related('options').all()
+    context = {
+        'questions': questions,
+        # 'options': options,
+    }
+    return render(request, "addquestion_to_test.html", context)

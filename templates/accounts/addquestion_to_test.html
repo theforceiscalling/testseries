@@ -1,0 +1,12 @@
+{% extends "base.html" %} %}
+{% block content %}
+<div class="container">
+{% for question in questions %}
+    <b>{{forloop.counter}}.</b> {{question.question_text}}<br/>
+    {{question.description}}<br/>
+    {% for option in question.options.all %}    
+        ({{forloop.counter}}) {{option.option}}<br/>
+    {% endfor %}<br/>
+{% endfor %}
+</div>
+{% endblock content %}
