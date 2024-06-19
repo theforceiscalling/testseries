@@ -9,6 +9,6 @@ urlpatterns = [
     path('logout', views.logout, name='logout'),
     path('myaccount', views.myaccount, name='myaccount'),
     path('verify', views.verify, name='verify'),
-    path('add-question', views.addquestion, name='add_question'),
+    path('add-question', views.addquestion, name='neetug_add_question'),
     path('add-question-to-test', views.addquestion_to_test, name='add_question_to_test'),
 ]

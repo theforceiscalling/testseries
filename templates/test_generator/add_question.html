@@ -1,40 +1,25 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Add Question</title>
-    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-    <style>
-        body {
-            background-color: #f8f9fa;
-        }
-        .container {
-            margin-top: 50px;
-        }
-        .card {
-            padding: 20px;
-            border: none;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        }
-        .form-group label {
-            font-weight: bold;
-        }
-        .btn-primary {
-            background-color: #007bff;
-            border: none;
-        }
-        .btn-primary:hover {
-            background-color: #0056b3;
-        }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <div class="card">
-            <h2 class="card-title">Add Question</h2>
+{% extends 'base.html' %}
+
+{% block content %}
+<title>Add Question</title>
+<div class="container">
+        <h2 class="card-title">Add Question</h2>
+
+        <div class="container">
             <form method="post">
                 {% csrf_token %}
+
+                <div class="form-group">
+                    <label for="question_type">Select Question type</label>
+                    <select id="question_type" name="question_type" class="form-control" required>
+                        <option value="" disabled selected>Question type</option>
+                            <option value="theory">Theory</option>
+                            <option value="mcq">MCQ</option>
+                            <option value="assertion_reason">Assertion and Reason</option>
+                            <option value="competency_case">Competency/Case Based</option>
+                    </select>
+                </div>
+
                 <div class="form-group">
                     <label for="module">Select Module</label>
                     <select id="module" name="module" class="form-control" required>
@@ -83,6 +68,10 @@
                     <label for="max_marks">Maximum Marks</label>
                     <input type="number" id="max_marks" name="max_marks" class="form-control" required>
                 </div>
+                <div class="form-group">
+                    <label for="pyq">PYQ</label>
+                    <input type="number" id="pyq" name="pyq" class="form-control">
+                </div>
                 <button type="submit" class="btn btn-primary btn-block">Add Question</button>
             </form>
         </div>
@@ -90,5 +79,4 @@
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-</body>
-</html>
+{% endblock %}

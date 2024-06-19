@@ -81,15 +81,19 @@ def download_test_pdf(request, test_id):
         return HttpResponse('We had some errors <pre>' + html + '</pre>')
     return response
 
+from django.contrib import messages
 @login_required
 def add_question(request):
     if request.method == 'POST':
+        question_type=request.POST.get('question_type')
         module_id = request.POST.get('module')
         class_id = request.POST.get('class')
         subject_id = request.POST.get('subject')
         chapter_id = request.POST.get('chapter')
         question_text = request.POST.get('question')
         solution_text = request.POST.get('solution')
+        max_marks=request.POST.get('max_marks')
+        pyq=request.POST.get('pyq')
 
         module = Module.objects.get(id=module_id)
         class_instance = Class.objects.get(id=class_id)
@@ -97,16 +101,19 @@ def add_question(request):
         chapter = Chapter.objects.get(id=chapter_id)
 
         question = Question.objects.create(
+            question_type=question_type,
             module=module,
             class_instance=class_instance,
             subject=subject,
             chapter=chapter,
             question_text=question_text,
             solution=solution_text,
-            added_by_user=request.user
+            added_by_user=request.user,
+            max_marks=max_marks,
+            pyq=pyq
         )
-
-        return redirect('add_question')  # Redirect to the same form or another page after submission
+        messages.success(request, "Question added.")
+        return redirect('../add-question')  # Redirect to the same form or another page after submission
 
     modules = Module.objects.all()
     classes = Class.objects.all()
