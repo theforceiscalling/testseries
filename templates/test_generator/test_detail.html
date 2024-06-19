@@ -7,8 +7,7 @@
 <div class="container list-group">
     {% for test_question in test_questions %}
         <div class="list-group-item">
-            <h5>{{ test_question.question.question_text }}</h5>
-            <p>Max Marks: {{ test_question.question.max_marks }}</p>
+            <h5>{{forloop.counter}}. {{ test_question.question.question_text }} [ {{ test_question.question.max_marks }} ]</h5>
             <p><small>Solution: {{ test_question.question.solution }}</small></p>
         </div>
     {% endfor %}
