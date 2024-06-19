@@ -58,15 +58,20 @@ def test_detail(request, test_id):
     test_questions = TestQuestion.objects.filter(test=test)
     return render(request, 'test_generator/test_detail.html', {'test': test, 'test_questions': test_questions})
 
+from django.template.loader import get_template
+from django.http import HttpResponse
+from xhtml2pdf import pisa
+import io
+
 @login_required
 def download_test_pdf(request, test_id):
     test = get_object_or_404(Test, pk=test_id)
     test_questions = TestQuestion.objects.filter(test=test)
     template_path = 'test_generator/test_pdf.html'
     context = {'test': test, 'test_questions': test_questions}
-    
+
     response = HttpResponse(content_type='application/pdf')
-    response['Content-Disposition'] = f'attachment; filename="{test.name}.pdf"'
+    response['Content-Disposition'] = f'attachment; filename="{test.name}_test.pdf"'
 
     template = get_template(template_path)
     html = template.render(context)
@@ -80,6 +85,34 @@ def download_test_pdf(request, test_id):
     if pisa_status.err:
         return HttpResponse('We had some errors <pre>' + html + '</pre>')
     return response
+
+@login_required
+def download_solutions_pdf(request, test_id):
+    try:
+        test = get_object_or_404(Test, pk=test_id)
+        test_questions = TestQuestion.objects.filter(test=test)
+        template_path = 'test_generator/solutions_pdf.html'
+        context = {'test': test, 'test_questions': test_questions}
+
+        response = HttpResponse(content_type='application/pdf')
+        response['Content-Disposition'] = f'attachment; filename="{test.name}_solutions.pdf"'
+
+        template = get_template(template_path)
+        html = template.render(context)
+
+        pisa_status = pisa.CreatePDF(
+            io.BytesIO(html.encode("UTF-8")),
+            dest=response,
+            encoding='UTF-8'
+        )
+
+        if pisa_status.err:
+            return HttpResponse('We had some errors <pre>' + html + '</pre>')
+        return response
+
+    except Exception as e:
+        return HttpResponse(f'An error occurred: {e}')
+
 
 from django.contrib import messages
 @login_required

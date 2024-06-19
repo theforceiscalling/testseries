@@ -1,3 +1,4 @@
+# urls.py
 from django.urls import path
 from . import views
 
@@ -12,5 +13,6 @@ urlpatterns = [
     path('create_test/', views.create_test, name='create_test'),
     path('test_detail/<int:test_id>/', views.test_detail, name='test_detail'),
     path('download_test_pdf/<int:test_id>/', views.download_test_pdf, name='download_test_pdf'),
+    path('download_solutions_pdf/<int:test_id>/', views.download_solutions_pdf, name='download_solutions_pdf'),
     path('add-question/', views.add_question, name='add_question'),
 ]

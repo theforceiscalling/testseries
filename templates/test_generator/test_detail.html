@@ -1,3 +1,4 @@
+<!-- templates/test_generator/test_detail.html -->
 {% extends 'base.html' %}
 
 {% block title %}Test Detail{% endblock %}
@@ -8,11 +9,11 @@
     {% for test_question in test_questions %}
         <div class="list-group-item">
             <h5>{{forloop.counter}}. {{ test_question.question.question_text }} [ {{ test_question.question.max_marks }} ]</h5>
-            <p><small>Solution: {{ test_question.question.solution }}</small></p>
         </div>
     {% endfor %}
 </div>
 <div class="container mt-4">
-    <a href="{% url 'test_generator:download_test_pdf' test.id %}" class="btn btn-primary">Download PDF</a>
+    <a href="{% url 'test_generator:download_test_pdf' test.id %}" class="btn btn-primary">Download Test PDF</a>
+    <a href="{% url 'test_generator:download_solutions_pdf' test.id %}" class="btn btn-secondary">Download Solutions PDF</a>
 </div>
 {% endblock %}

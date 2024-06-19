@@ -1,0 +1,21 @@
+<!-- templates/test_generator/solutions_pdf.html -->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{{ test.name }} - Solutions</title>
+    <style>
+        body { font-family: DejaVu Sans, sans-serif; }
+    </style>
+</head>
+<body>
+    <h1>{{ test.name }} - Solutions</h1>
+    <ol>
+        {% for test_question in test_questions %}
+            <li>
+                <p>{{ test_question.question.question_text }} [ {{ test_question.question.max_marks }} ]</p>
+                <p><strong>Solution:</strong> {{ test_question.question.solution }}</p>
+            </li>
+        {% endfor %}
+    </ol>
+</body>
+</html>
