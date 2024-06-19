@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'home',
     'neetug',
     'taketest',
+    'test_generator2',
 ]
 
 AUTH_USER_MODEL = "accounts.CustomUser"

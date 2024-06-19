@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+
+{% block title %}Chapter Selection{% endblock %}
+
+{% block content %}
+<h1 class="text-center my-4">Select Chapter for {{ subject.name }}</h1>
+<div class="container list-group">
+    {% for chapter in chapters %}
+        <a href="{% url 'test_generator:question_selection' chapter.id %}" class="list-group-item list-group-item-action">{{ chapter.name }}</a>
+    {% endfor %}
+</div>
+{% endblock %}

@@ -27,4 +27,5 @@ urlpatterns = [
     path('neetug/', include('neetug.urls')),
     path('taketest/', include('taketest.urls')),
     # path('cbsecl10/', include('cbsecl10.urls')),
+    path('test_generator/', include('test_generator2.urls')),
 ]

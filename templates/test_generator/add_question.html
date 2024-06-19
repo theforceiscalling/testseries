@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Question</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+        .container {
+            margin-top: 50px;
+        }
+        .card {
+            padding: 20px;
+            border: none;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        .form-group label {
+            font-weight: bold;
+        }
+        .btn-primary {
+            background-color: #007bff;
+            border: none;
+        }
+        .btn-primary:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="card">
+            <h2 class="card-title">Add Question</h2>
+            <form method="post">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label for="module">Select Module</label>
+                    <select id="module" name="module" class="form-control" required>
+                        <option value="" disabled selected>Select Module</option>
+                        {% for module in modules %}
+                            <option value="{{ module.id }}">{{ module.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="class">Select Class</label>
+                    <select id="class" name="class" class="form-control" required>
+                        <option value="" disabled selected>Select Class</option>
+                        {% for class in classes %}
+                            <option value="{{ class.id }}">{{ class.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="subject">Select Subject</label>
+                    <select id="subject" name="subject" class="form-control" required>
+                        <option value="" disabled selected>Select Subject</option>
+                        {% for subject in subjects %}
+                            <option value="{{ subject.id }}">{{ subject.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="chapter">Select Chapter</label>
+                    <select id="chapter" name="chapter" class="form-control" required>
+                        <option value="" disabled selected>Select Chapter</option>
+                        {% for chapter in chapters %}
+                            <option value="{{ chapter.id }}">{{ chapter.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="question">Question</label>
+                    <textarea id="question" name="question" class="form-control" rows="3" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="solution">Solution</label>
+                    <textarea id="solution" name="solution" class="form-control" rows="3" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="max_marks">Maximum Marks</label>
+                    <input type="number" id="max_marks" name="max_marks" class="form-control" required>
+                </div>
+                <button type="submit" class="btn btn-primary btn-block">Add Question</button>
+            </form>
+        </div>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

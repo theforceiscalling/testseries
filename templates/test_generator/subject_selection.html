@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+
+{% block title %}Subject Selection{% endblock %}
+
+{% block content %}
+<h1 class="text-center my-4">Select Subject for {{ class.name }}</h1>
+<div class="container list-group">
+    {% for subject in subjects %}
+        <a href="{% url 'test_generator:chapter_selection' subject.id %}" class="list-group-item list-group-item-action">{{ subject.name }}</a>
+    {% endfor %}
+</div>
+{% endblock %}

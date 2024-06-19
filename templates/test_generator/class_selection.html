@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+
+{% block title %}Class Selection{% endblock %}
+
+{% block content %}
+<h1 class="text-center my-4">Select Class for {{ module.name }}</h1>
+<div class="container list-group">
+    {% for class in classes %}
+        <a href="{% url 'test_generator:subject_selection' class.id %}" class="list-group-item list-group-item-action">{{ class.name }}</a>
+    {% endfor %}
+</div>
+{% endblock %}

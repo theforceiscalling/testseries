@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ test.name }}</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 40px;
+        }
+        .question {
+            margin-bottom: 20px;
+        }
+        .question h5 {
+            margin-bottom: 5px;
+        }
+        .question p {
+            margin: 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>{{ test.name }}</h1>
+    {% for test_question in test_questions %}
+        <div class="question">
+            <h5>{{ test_question.question.question_text }}</h5>
+            <p>Max Marks: {{ test_question.question.max_marks }}</p>
+            <p><small>Solution: {{ test_question.question.solution }}</small></p>
+        </div>
+    {% endfor %}
+</body>
+</html>

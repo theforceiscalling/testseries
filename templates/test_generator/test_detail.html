@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+
+{% block title %}Test Detail{% endblock %}
+
+{% block content %}
+<h1 class="text-center my-4">{{ test.name }}</h1>
+<div class="container list-group">
+    {% for test_question in test_questions %}
+        <div class="list-group-item">
+            <h5>{{ test_question.question.question_text }}</h5>
+            <p>Max Marks: {{ test_question.question.max_marks }}</p>
+            <p><small>Solution: {{ test_question.question.solution }}</small></p>
+        </div>
+    {% endfor %}
+</div>
+<div class="container mt-4">
+    <a href="{% url 'test_generator:download_test_pdf' test.id %}" class="btn btn-primary">Download PDF</a>
+</div>
+{% endblock %}
