@@ -115,53 +115,53 @@ def download_solutions_pdf(request, test_id):
         return HttpResponse(f'An error occurred: {e}')
 
 
-from django.contrib import messages
-@login_required
-def add_question(request):
-    if request.method == 'POST':
-        question_type=request.POST.get('question_type')
-        module_id = request.POST.get('module')
-        class_id = request.POST.get('class')
-        subject_id = request.POST.get('subject')
-        chapter_id = request.POST.get('chapter')
-        question_text = request.POST.get('question')
-        solution_text = request.POST.get('solution')
-        max_marks=request.POST.get('max_marks')
-        pyq=request.POST.get('pyq')
+# from django.contrib import messages
+# @login_required
+# def add_question(request):
+#     if request.method == 'POST':
+#         question_type=request.POST.get('question_type')
+#         module_id = request.POST.get('module')
+#         class_id = request.POST.get('class')
+#         subject_id = request.POST.get('subject')
+#         chapter_id = request.POST.get('chapter')
+#         question_text = request.POST.get('question')
+#         solution_text = request.POST.get('solution')
+#         max_marks=request.POST.get('max_marks')
+#         pyq=request.POST.get('pyq')
 
-        module = Module.objects.get(id=module_id)
-        class_instance = Class.objects.get(id=class_id)
-        subject = Subject.objects.get(id=subject_id)
-        chapter = Chapter.objects.get(id=chapter_id)
+#         module = Module.objects.get(id=module_id)
+#         class_instance = Class.objects.get(id=class_id)
+#         subject = Subject.objects.get(id=subject_id)
+#         chapter = Chapter.objects.get(id=chapter_id)
 
-        question = Question.objects.create(
-            question_type=question_type,
-            module=module,
-            class_instance=class_instance,
-            subject=subject,
-            chapter=chapter,
-            question_text=question_text,
-            solution=solution_text,
-            added_by_user=request.user,
-            max_marks=max_marks,
-            pyq=pyq
-        )
-        messages.success(request, "Question added.")
-        return redirect('../add-question')  # Redirect to the same form or another page after submission
+#         question = Question.objects.create(
+#             question_type=question_type,
+#             module=module,
+#             class_instance=class_instance,
+#             subject=subject,
+#             chapter=chapter,
+#             question_text=question_text,
+#             solution=solution_text,
+#             added_by_user=request.user,
+#             max_marks=max_marks,
+#             pyq=pyq
+#         )
+#         messages.success(request, "Question added.")
+#         return redirect('../add-question')  # Redirect to the same form or another page after submission
 
-    modules = Module.objects.all()
-    classes = Class.objects.all()
-    subjects = Subject.objects.all()
-    chapters = Chapter.objects.all()
+#     modules = Module.objects.all()
+#     classes = Class.objects.all()
+#     subjects = Subject.objects.all()
+#     chapters = Chapter.objects.all()
 
-    context = {
-        'modules': modules,
-        'classes': classes,
-        'subjects': subjects,
-        'chapters': chapters,
-    }
+#     context = {
+#         'modules': modules,
+#         'classes': classes,
+#         'subjects': subjects,
+#         'chapters': chapters,
+#     }
 
-    return render(request, 'test_generator/add_question.html', context)
+#     return render(request, 'test_generator/add_question.html', context)
 
 @login_required
 def my_tests(request):
@@ -190,3 +190,71 @@ def get_chapters(request):
     chapters = Chapter.objects.filter(subject_id=subject_id)
     data = [{'id': c.id, 'name': c.name} for c in chapters]
     return JsonResponse(data, safe=False)
+
+from django.shortcuts import render
+from django.http import JsonResponse
+from .models import Subject
+
+def update_subjects(request, class_id):
+    subjects = Subject.objects.filter(class_instance_id=class_id)
+    subject_options = '<option value="" disabled selected>Select Subject</option>'
+    for subject in subjects:
+        subject_options += f'<option value="{subject.id}">{subject.name}</option>'
+    data = {
+        'subject_options': subject_options
+    }
+    return JsonResponse(data)
+
+from django.http import JsonResponse
+
+@login_required
+def add_question(request):
+    if request.method == 'POST':
+        question_type = request.POST.get('question_type')
+        module_id = request.POST.get('module')
+        class_id = request.POST.get('class')
+        subject_id = request.POST.get('subject')
+        chapter_id = request.POST.get('chapter')
+        question_text = request.POST.get('question')
+        solution_text = request.POST.get('solution')
+        max_marks = request.POST.get('max_marks')
+        pyq = request.POST.get('pyq')
+
+        if not all([question_type, module_id, class_id, subject_id, chapter_id, question_text, max_marks]):
+            return JsonResponse({'error': 'Missing required fields'}, status=400)
+
+        try:
+            module = Module.objects.get(id=module_id)
+            class_instance = Class.objects.get(id=class_id)
+            subject = Subject.objects.get(id=subject_id)
+            chapter = Chapter.objects.get(id=chapter_id)
+
+            question = Question.objects.create(
+                question_type=question_type,
+                module=module,
+                class_instance=class_instance,
+                subject=subject,
+                chapter=chapter,
+                question_text=question_text,
+                solution=solution_text,
+                added_by_user=request.user,
+                max_marks=max_marks,
+                pyq=pyq
+            )
+            return JsonResponse({'success': 'Question added successfully'})
+        except Exception as e:
+            return JsonResponse({'error': str(e)}, status=500)
+
+    modules = Module.objects.all()
+    classes = Class.objects.all()
+    subjects = Subject.objects.all()
+    chapters = Chapter.objects.all()
+
+    context = {
+        'modules': modules,
+        'classes': classes,
+        'subjects': subjects,
+        'chapters': chapters,
+    }
+
+    return render(request, 'test_generator/add_question.html', context)

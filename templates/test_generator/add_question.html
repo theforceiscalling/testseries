@@ -5,80 +5,141 @@
 {% block content %}
 <title>Add Question</title>
 <div class="container">
-        <h2 class="card-title">Add Question</h2>
+    <h2 class="card-title">Add Question</h2>
 
-        <div class="container">
-            <form method="post">
-                {% csrf_token %}
+    <div class="container">
+        <form method="post" id="addQuestionForm">
+            {% csrf_token %}
 
-                <div class="form-group">
-                    <label for="question_type">Select Question type</label>
-                    <select id="question_type" name="question_type" class="form-control" required>
-                        <option value="" disabled selected>Question type</option>
-                            <option value="theory">Theory</option>
-                            <option value="mcq">MCQ</option>
-                            <option value="assertion_reason">Assertion and Reason</option>
-                            <option value="competency_case">Competency/Case Based</option>
-                    </select>
-                </div>
+            <div class="form-group">
+                <label for="question_type">Select Question type</label>
+                <select id="question_type" name="question_type" class="form-control" required>
+                    <option value="" disabled selected>Question type</option>
+                    <option value="theory">Theory</option>
+                    <option value="mcq">MCQ</option>
+                    <option value="assertion_reason">Assertion and Reason</option>
+                    <option value="competency_case">Competency/Case Based</option>
+                </select>
+            </div>
 
-                <div class="form-group">
-                    <label for="module">Select Module</label>
-                    <select id="module" name="module" class="form-control" required>
-                        <option value="" disabled selected>Select Module</option>
-                        {% for module in modules %}
-                            <option value="{{ module.id }}">{{ module.name }}</option>
-                        {% endfor %}
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label for="class">Select Class</label>
-                    <select id="class" name="class" class="form-control" required>
-                        <option value="" disabled selected>Select Class</option>
-                        {% for class in classes %}
-                            <option value="{{ class.id }}">{{ class.name }}</option>
-                        {% endfor %}
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label for="subject">Select Subject</label>
-                    <select id="subject" name="subject" class="form-control" required>
-                        <option value="" disabled selected>Select Subject</option>
-                        {% for subject in subjects %}
-                            <option value="{{ subject.id }}">{{ subject.name }}</option>
-                        {% endfor %}
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label for="chapter">Select Chapter</label>
-                    <select id="chapter" name="chapter" class="form-control" required>
-                        <option value="" disabled selected>Select Chapter</option>
-                        {% for chapter in chapters %}
-                            <option value="{{ chapter.id }}">{{ chapter.name }}</option>
-                        {% endfor %}
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label for="question">Question</label>
-                    <textarea id="question" name="question" class="form-control" rows="3" required></textarea>
-                </div>
-                <div class="form-group">
-                    <label for="solution">Solution</label>
-                    <textarea id="solution" name="solution" class="form-control" rows="3" required></textarea>
-                </div>
-                <div class="form-group">
-                    <label for="max_marks">Maximum Marks</label>
-                    <input type="number" id="max_marks" name="max_marks" class="form-control" required>
-                </div>
-                <div class="form-group">
-                    <label for="pyq">PYQ</label>
-                    <input type="number" id="pyq" name="pyq" class="form-control">
-                </div>
-                <button type="submit" class="btn btn-primary btn-block">Add Question</button>
-            </form>
-        </div>
+            <div class="form-group">
+                <label for="module">Select Module</label>
+                <select id="module" name="module" class="form-control" required>
+                    <option value="" disabled selected>Select Module</option>
+                    {% for module in modules %}
+                        <option value="{{ module.id }}">{{ module.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="class">Select Class</label>
+                <select id="class" name="class" class="form-control" required onchange="updateSubjects()">
+                    <option value="" disabled selected>Select Class</option>
+                    {% for class in classes %}
+                        <option value="{{ class.id }}">{{ class.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="subject">Select Subject</label>
+                <select id="subject" name="subject" class="form-control" required>
+                    <option value="" disabled selected>Select Subject</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="chapter">Select Chapter</label>
+                <select id="chapter" name="chapter" class="form-control" required>
+                    <option value="" disabled selected>Select Chapter</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="question">Question</label>
+                <textarea id="question" name="question" class="form-control" rows="3" required></textarea>
+            </div>
+            <div class="form-group">
+                <label for="solution">Solution</label>
+                <textarea id="solution" name="solution" class="form-control" rows="3" required></textarea>
+            </div>
+            <div class="form-group">
+                <label for="max_marks">Maximum Marks</label>
+                <input type="number" id="max_marks" name="max_marks" class="form-control" required>
+            </div>
+            <div class="form-group">
+                <label for="pyq">PYQ</label>
+                <input type="number" id="pyq" name="pyq" class="form-control">
+            </div>
+            <button type="submit" class="btn btn-primary btn-block">Add Question</button>
+        </form>
     </div>
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+<script>
+    $('#addQuestionForm').submit(function(e) {
+        e.preventDefault();
+        $.ajax({
+            type: 'POST',
+            url: '/test_generator/add_question/',
+            data: $(this).serialize(),
+            success: function(response) {
+                // Handle success response
+                alert('Question added successfully!');
+                $('#addQuestionForm')[0].reset();
+            },
+            error: function(error) {
+                // Handle error response
+                alert('Failed to add question. Please try again.');
+            }
+        });
+    });
+
+    $(document).ready(function() {
+        $('#class').change(function() {
+            var classId = $(this).val();
+            if(classId) {
+                $.ajax({
+                    url: '/test_generator/get_subjects/',
+                    type: 'GET',
+                    data: {'class_id': classId},
+                    success: function(data) {
+                        $('#subject').empty();
+                        $('#subject').append('<option value="" disabled selected>Select Subject</option>');
+                        $.each(data, function(key, value) {
+                            $('#subject').append('<option value="' + value.id + '">' + value.name + '</option>');
+                        });
+                        $('#chapter').empty();
+                        $('#chapter').append('<option value="" disabled selected>Select Chapter</option>');
+                    }
+                });
+            } else {
+                $('#subject').empty();
+                $('#subject').append('<option value="" disabled selected>Select Subject</option>');
+                $('#chapter').empty();
+                $('#chapter').append('<option value="" disabled selected>Select Chapter</option>');
+            }
+        });
+    
+        $('#subject').change(function() {
+            var subjectId = $(this).val();
+            if(subjectId) {
+                $.ajax({
+                    url: '/test_generator/get_chapters/',
+                    type: 'GET',
+                    data: {'subject_id': subjectId},
+                    success: function(data) {
+                        $('#chapter').empty();
+                        $('#chapter').append('<option value="" disabled selected>Select Chapter</option>');
+                        $.each(data, function(key, value) {
+                            $('#chapter').append('<option value="' + value.id + '">' + value.name + '</option>');
+                        });
+                    }
+                });
+            } else {
+                $('#chapter').empty();
+                $('#chapter').append('<option value="" disabled selected>Select Chapter</option>');
+            }
+        });
+    });
+    
+</script>
 {% endblock %}
