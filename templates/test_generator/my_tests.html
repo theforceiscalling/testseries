@@ -1,0 +1,21 @@
+<!-- my_tests.html -->
+
+{% extends 'base.html' %}
+
+{% block title %}My Tests{% endblock %}
+
+{% block content %}
+<div class="container">
+<h1>My Tests</h1>
+
+{% if tests %}
+    <ul>
+        {% for test in tests %}
+            <li><a href="{% url 'test_generator:test_detail' test.id %}">{{ test.name }}</a></li>
+        {% endfor %}
+    </ul>
+{% else %}
+    <p>You have not created any tests yet.</p>
+{% endif %}
+</div>
+{% endblock %}

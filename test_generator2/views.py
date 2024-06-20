@@ -38,11 +38,12 @@ def question_selection(request, chapter_id):
 @login_required
 def create_test(request):
     if request.method == 'POST':
+        user=request.user
         test_name = request.POST.get('test_name')
         is_online = 'is_online' in request.POST
         question_ids = request.POST.getlist('questions')
 
-        test = Test.objects.create(name=test_name, is_online=is_online)
+        test = Test.objects.create(name=test_name, is_online=is_online, added_by_user=user)
 
         for question_id in question_ids:
             question = get_object_or_404(Question, pk=question_id)
@@ -161,3 +162,9 @@ def add_question(request):
     }
 
     return render(request, 'test_generator/add_question.html', context)
+
+@login_required
+def my_tests(request):
+    user = request.user
+    tests = Test.objects.filter(added_by_user=user)
+    return render(request, 'test_generator/my_tests.html', {'tests': tests})

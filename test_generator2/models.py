@@ -56,6 +56,7 @@ class Question(models.Model):
 class Test(models.Model):
     name = models.CharField(max_length=100)
     is_online = models.BooleanField(default=False)
+    added_by_user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, null=True, blank=True)
 
     def __str__(self):
         return self.name

@@ -15,4 +15,5 @@ urlpatterns = [
     path('download_test_pdf/<int:test_id>/', views.download_test_pdf, name='download_test_pdf'),
     path('download_solutions_pdf/<int:test_id>/', views.download_solutions_pdf, name='download_solutions_pdf'),
     path('add-question/', views.add_question, name='add_question'),
+    path('my_tests/', views.my_tests, name='my_tests'),
 ]

@@ -4,7 +4,10 @@
 <head>
     <title>{{ test.name }} - Solutions</title>
     <style>
-        body { font-family: DejaVu Sans, sans-serif; }
+        body {
+            font-family: DejaVu Sans, sans-serif;
+            font-size: 14px; 
+        }
     </style>
 </head>
 <body>
@@ -12,7 +15,7 @@
     <ol>
         {% for test_question in test_questions %}
             <li>
-                <p>{{ test_question.question.question_text }} [ {{ test_question.question.max_marks }} ]</p>
+                <p>{{forloop.counter}}. {{ test_question.question.question_text }} [ {{ test_question.question.max_marks }} ]</p>
                 <p><strong>Solution:</strong> {{ test_question.question.solution }}</p>
             </li>
         {% endfor %}
