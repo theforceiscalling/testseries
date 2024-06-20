@@ -168,3 +168,25 @@ def my_tests(request):
     user = request.user
     tests = Test.objects.filter(added_by_user=user)
     return render(request, 'test_generator/my_tests.html', {'tests': tests})
+
+from django.shortcuts import render
+from .models import Module, Class, Subject, Chapter
+from django.http import JsonResponse
+
+def get_classes(request):
+    module_id = request.GET.get('module_id')
+    classes = Class.objects.filter(module_id=module_id)
+    data = [{'id': c.id, 'name': c.name} for c in classes]
+    return JsonResponse(data, safe=False)
+
+def get_subjects(request):
+    class_id = request.GET.get('class_id')
+    subjects = Subject.objects.filter(class_instance_id=class_id)
+    data = [{'id': s.id, 'name': s.name} for s in subjects]
+    return JsonResponse(data, safe=False)
+
+def get_chapters(request):
+    subject_id = request.GET.get('subject_id')
+    chapters = Chapter.objects.filter(subject_id=subject_id)
+    data = [{'id': c.id, 'name': c.name} for c in chapters]
+    return JsonResponse(data, safe=False)

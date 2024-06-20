@@ -16,4 +16,7 @@ urlpatterns = [
     path('download_solutions_pdf/<int:test_id>/', views.download_solutions_pdf, name='download_solutions_pdf'),
     path('add-question/', views.add_question, name='add_question'),
     path('my_tests/', views.my_tests, name='my_tests'),
+    path('get_classes/', views.get_classes, name='get_classes'),
+    path('get_subjects/', views.get_subjects, name='get_subjects'),
+    path('get_chapters/', views.get_chapters, name='get_chapters'),
 ]
