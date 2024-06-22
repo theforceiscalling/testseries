@@ -12,7 +12,7 @@ class SubjectAdmin(admin.ModelAdmin):
     list_display=("pk", "name")
     
 class ChapterAdmin(admin.ModelAdmin):
-    list_display=("pk", "name")
+    list_display=("pk", "name", "subject")
     
 class QuestionAdmin(admin.ModelAdmin):
     list_display=("question_type", "question_text")

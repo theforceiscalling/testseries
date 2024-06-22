@@ -59,8 +59,9 @@ def login(request):
                 return redirect('login')
             auth_login(request, user)
             return redirect('myaccount')
-        messages.warning(request, 'Invalid combination!')
-        return redirect('login')
+        else:
+            messages.warning(request, 'Invalid combination!')
+            return redirect('login')
     return render(request, 'login.html')
 
 def logout(request):
