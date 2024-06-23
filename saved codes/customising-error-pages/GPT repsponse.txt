@@ -1,0 +1,133 @@
+To customize the error pages (like 404 Not Found) and receive error notifications in your Django project, follow these steps:
+
+### Step 1: Customize Error Pages
+
+1. **Create Custom Error Templates:**
+
+   Create templates for your custom error pages in your `templates` directory. For example:
+
+   - `404.html` for 404 errors
+   - `500.html` for 500 errors
+
+   Here is an example of how you might create a `404.html` template:
+
+   ```html
+   <!-- templates/404.html -->
+   {% extends 'base.html' %}
+
+   {% block title %}Page Not Found{% endblock %}
+
+   {% block content %}
+   <div class="container">
+       <h1>Page Not Found</h1>
+       <p>We're sorry, but the page you were looking for doesn't exist.</p>
+       <a href="/">Go to Homepage</a>
+   </div>
+   {% endblock %}
+   ```
+
+2. **Update the URL Configuration:**
+
+   Ensure that your URL configuration in `urls.py` includes handlers for these errors:
+
+   ```python
+   from django.conf.urls import handler404, handler500
+
+   # Import your views or handlers if you have custom views for these errors
+
+   handler404 = 'your_app.views.custom_404'
+   handler500 = 'your_app.views.custom_500'
+   ```
+
+3. **Create Views for Custom Error Pages:**
+
+   Define custom view functions to handle these errors in your `views.py`:
+
+   ```python
+   from django.shortcuts import render
+
+   def custom_404(request, exception):
+       return render(request, '404.html', status=404)
+
+   def custom_500(request):
+       return render(request, '500.html', status=500)
+   ```
+
+### Step 2: Receive Error Notifications
+
+1. **Configure Email Backend:**
+
+   Ensure your Django project is configured to send emails. In `settings.py`, configure the email backend:
+
+   ```python
+   EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+   EMAIL_HOST = 'your_email_host'
+   EMAIL_PORT = 587
+   EMAIL_USE_TLS = True
+   EMAIL_HOST_USER = 'your_email@example.com'
+   EMAIL_HOST_PASSWORD = 'your_email_password'
+   ```
+
+2. **Set Up Admin Email Notifications:**
+
+   Add the following to your `settings.py` to enable error email notifications:
+
+   ```python
+   ADMINS = [
+       ('Your Name', 'your_email@example.com'),
+   ]
+
+   MANAGERS = ADMINS
+   ```
+
+   Django will send an email to the addresses listed in `ADMINS` and `MANAGERS` whenever a server error occurs.
+
+3. **Enable Logging for Errors:**
+
+   Configure logging in `settings.py` to log errors and send email notifications:
+
+   ```python
+   LOGGING = {
+       'version': 1,
+       'disable_existing_loggers': False,
+       'handlers': {
+           'mail_admins': {
+               'level': 'ERROR',
+               'class': 'django.utils.log.AdminEmailHandler',
+           },
+           'file': {
+               'level': 'ERROR',
+               'class': 'logging.FileHandler',
+               'filename': 'errors.log',
+           },
+       },
+       'loggers': {
+           'django.request': {
+               'handlers': ['mail_admins', 'file'],
+               'level': 'ERROR',
+               'propagate': True,
+           },
+       },
+   }
+   ```
+
+   This configuration ensures that all errors will be logged to a file (`errors.log`) and emailed to the addresses listed in `ADMINS`.
+
+### Testing Your Setup
+
+1. **Custom Error Pages:**
+
+   To test your custom error pages, you can manually raise an error in your views. For example, raise a `Http404` error to see your custom 404 page:
+
+   ```python
+   from django.http import Http404
+
+   def some_view(request):
+       raise Http404("Page not found")
+   ```
+
+2. **Error Notifications:**
+
+   To test error notifications, you can trigger a server error by introducing an error in your view code. Ensure you have access to your email to verify that the error notification has been received.
+
+By following these steps, you will have customized error pages and receive error notifications to stay informed about issues on your site.

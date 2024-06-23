@@ -26,6 +26,7 @@ class Subject(models.Model):
 class Textbook(models.Model):
     name = models.CharField(max_length=100, null=True, blank=True)
     subject = models.ForeignKey(Subject, on_delete=models.CASCADE)
+    class_instance = models.ForeignKey(Class, on_delete=models.CASCADE, null=True, blank=True)
     
     def __str__(self):
         return self.name
@@ -50,6 +51,7 @@ class Question(models.Model):
     module = models.ForeignKey(Module, on_delete=models.CASCADE, related_name='questions')
     class_instance = models.ForeignKey(Class, on_delete=models.CASCADE)
     subject = models.ForeignKey(Subject, on_delete=models.CASCADE)
+    textbook = models.ForeignKey(Textbook, on_delete=models.CASCADE, null=True, blank=True)
     chapter = models.ForeignKey(Chapter, on_delete=models.CASCADE)
     question_text = models.TextField()
     solution = models.TextField(blank=True, null=True)
@@ -72,6 +74,7 @@ class Test(models.Model):
 class TestQuestion(models.Model):
     test = models.ForeignKey(Test, on_delete=models.CASCADE)
     question = models.ForeignKey(Question, on_delete=models.CASCADE)
+    textbook = models.ForeignKey(Textbook, on_delete=models.CASCADE, null=True, blank=True)
 
 class Teacher(models.Model):
     user = models.OneToOneField(CustomUser, on_delete=models.CASCADE)

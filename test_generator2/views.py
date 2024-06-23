@@ -24,10 +24,16 @@ def subject_selection(request, class_id):
     return render(request, 'test_generator/subject_selection.html', {'class': class_model, 'subjects': subjects})
 
 @login_required
-def chapter_selection(request, subject_id):
+def textbook_selection(request, subject_id):
     subject = get_object_or_404(Subject, pk=subject_id)
-    chapters = Chapter.objects.filter(subject=subject)
-    return render(request, 'test_generator/chapter_selection.html', {'subject': subject, 'chapters': chapters})
+    textbooks = Textbook.objects.filter(subject=subject)
+    return render(request, 'test_generator/textbook_selection.html', {'subject': subject, 'textbooks': textbooks})
+
+@login_required
+def chapter_selection(request, textbook_id):
+    textbook = get_object_or_404(Textbook, pk=textbook_id)
+    chapters = Chapter.objects.filter(textbook=textbook)
+    return render(request, 'test_generator/chapter_selection.html', {'textbook': textbook, 'chapters': chapters})
 
 @login_required
 def question_selection(request, chapter_id):

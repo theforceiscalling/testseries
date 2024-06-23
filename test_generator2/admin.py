@@ -6,19 +6,19 @@ class ModuleAdmin(admin.ModelAdmin):
     list_display=("pk", "name")
     
 class ClassAdmin(admin.ModelAdmin):
-    list_display=("pk", "name")
+    list_display=("pk", "name", "module")
     
 class SubjectAdmin(admin.ModelAdmin):
-    list_display=("pk", "name")
+    list_display=("pk", "name", "class_instance", "module")
 
 class TextbookAdmin(admin.ModelAdmin):
-    list_display=("pk", "name")
-    
-class ChapterAdmin(admin.ModelAdmin):
     list_display=("pk", "name", "subject")
     
+class ChapterAdmin(admin.ModelAdmin):
+    list_display=("pk", "name", "subject", "textbook")
+    
 class QuestionAdmin(admin.ModelAdmin):
-    list_display=("question_type", "question_text")
+    list_display=("question_type", "question_text", "class_instance")
     
 class TestAdmin(admin.ModelAdmin):
     list_display=("pk", "name")
