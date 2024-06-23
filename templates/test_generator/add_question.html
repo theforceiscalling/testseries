@@ -46,6 +46,14 @@
                     <option value="" disabled selected>Select Subject</option>
                 </select>
             </div>
+
+            <div class="form-group">
+                <label for="textbook">Select Textbook</label>
+                <select id="textbook" name="textbook" class="form-control" required>
+                    <option value="" disabled selected>Select Textbook</option>
+                </select>
+            </div>
+
             <div class="form-group">
                 <label for="chapter">Select Chapter</label>
                 <select id="chapter" name="chapter" class="form-control" required>
@@ -74,25 +82,8 @@
 </div>
 
 <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
 <script>
-    $('#addQuestionForm').submit(function(e) {
-        e.preventDefault();
-        $.ajax({
-            type: 'POST',
-            url: '/test_generator/add_question/',
-            data: $(this).serialize(),
-            success: function(response) {
-                // Handle success response
-                alert('Question added successfully!');
-                $('#addQuestionForm')[0].reset();
-            },
-            error: function(error) {
-                // Handle error response
-                alert('Failed to add question. Please try again.');
-            }
-        });
-    });
-
     $(document).ready(function() {
         $('#class').change(function() {
             var classId = $(this).val();
@@ -107,6 +98,8 @@
                         $.each(data, function(key, value) {
                             $('#subject').append('<option value="' + value.id + '">' + value.name + '</option>');
                         });
+                        $('#textbook').empty();
+                        $('#textbook').append('<option value="" disabled selected>Select Textbook</option>');
                         $('#chapter').empty();
                         $('#chapter').append('<option value="" disabled selected>Select Chapter</option>');
                     }
@@ -114,18 +107,45 @@
             } else {
                 $('#subject').empty();
                 $('#subject').append('<option value="" disabled selected>Select Subject</option>');
+                $('#textbook').empty();
+                $('#textbook').append('<option value="" disabled selected>Select Textbook</option>');
                 $('#chapter').empty();
                 $('#chapter').append('<option value="" disabled selected>Select Chapter</option>');
             }
         });
-    
+
         $('#subject').change(function() {
             var subjectId = $(this).val();
             if(subjectId) {
                 $.ajax({
-                    url: '/test_generator/get_chapters/',
+                    url: '/test_generator/get_textbooks/',
                     type: 'GET',
                     data: {'subject_id': subjectId},
+                    success: function(data) {
+                        $('#textbook').empty();
+                        $('#textbook').append('<option value="" disabled selected>Select Textbook</option>');
+                        $.each(data, function(key, value) {
+                            $('#textbook').append('<option value="' + value.id + '">' + value.name + '</option>');
+                        });
+                        $('#chapter').empty();
+                        $('#chapter').append('<option value="" disabled selected>Select Chapter</option>');
+                    }
+                });
+            } else {
+                $('#textbook').empty();
+                $('#textbook').append('<option value="" disabled selected>Select Textbook</option>');
+                $('#chapter').empty();
+                $('#chapter').append('<option value="" disabled selected>Select Chapter</option>');
+            }
+        });
+
+        $('#textbook').change(function() {
+            var textbookId = $(this).val();
+            if(textbookId) {
+                $.ajax({
+                    url: '/test_generator/get_chapters/',
+                    type: 'GET',
+                    data: {'textbook_id': textbookId},
                     success: function(data) {
                         $('#chapter').empty();
                         $('#chapter').append('<option value="" disabled selected>Select Chapter</option>');
@@ -140,6 +160,21 @@
             }
         });
     });
-    
+
+    $('#addQuestionForm').submit(function(e) {
+        e.preventDefault();
+        $.ajax({
+            type: 'POST',
+            url: '/test_generator/add_question/',
+            data: $(this).serialize(),
+            success: function(response) {
+                alert('Question added successfully!');
+                $('#addQuestionForm')[0].reset();
+            },
+            error: function(error) {
+                alert('Failed to add question. Please try again.');
+            }
+        });
+    });
 </script>
 {% endblock %}

@@ -22,10 +22,18 @@ class Subject(models.Model):
     
     def __str__(self):
         return self.name
+    
+class Textbook(models.Model):
+    name = models.CharField(max_length=100, null=True, blank=True)
+    subject = models.ForeignKey(Subject, on_delete=models.CASCADE)
+    
+    def __str__(self):
+        return self.name
 
 class Chapter(models.Model):
     name = models.CharField(max_length=100)
     subject = models.ForeignKey(Subject, on_delete=models.CASCADE)
+    textbook = models.ForeignKey(Textbook, on_delete=models.CASCADE, null=True, blank=True)
     
     def __str__(self):
         return self.name

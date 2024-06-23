@@ -10,6 +10,9 @@ class ClassAdmin(admin.ModelAdmin):
     
 class SubjectAdmin(admin.ModelAdmin):
     list_display=("pk", "name")
+
+class TextbookAdmin(admin.ModelAdmin):
+    list_display=("pk", "name")
     
 class ChapterAdmin(admin.ModelAdmin):
     list_display=("pk", "name", "subject")
@@ -29,6 +32,7 @@ class TeacherAdmin(admin.ModelAdmin):
 admin.site.register(Module, ModuleAdmin)
 admin.site.register(Class, ClassAdmin)
 admin.site.register(Subject, SubjectAdmin)
+admin.site.register(Textbook, TextbookAdmin)
 admin.site.register(Chapter, ChapterAdmin)
 admin.site.register(Question, QuestionAdmin)
 admin.site.register(Test, TestAdmin)

@@ -1,7 +1,7 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
-from .models import Module, Class, Subject, Chapter, Question, Test, TestQuestion
+from .models import Module, Class, Subject, Textbook, Chapter, Question, Test, TestQuestion
 import io
 from django.template.loader import get_template
 from xhtml2pdf import pisa  # You might need to install xhtml2pdf
@@ -185,9 +185,14 @@ def get_subjects(request):
     data = [{'id': s.id, 'name': s.name} for s in subjects]
     return JsonResponse(data, safe=False)
 
-def get_chapters(request):
+def get_textbooks(request):
     subject_id = request.GET.get('subject_id')
-    chapters = Chapter.objects.filter(subject_id=subject_id)
+    textbooks = Textbook.objects.filter(subject_id=subject_id)
+    return JsonResponse(list(textbooks.values('id', 'name')), safe=False)
+
+def get_chapters(request):
+    textbook_id = request.GET.get('textbook_id')
+    chapters = Chapter.objects.filter(textbook_id=textbook_id)
     data = [{'id': c.id, 'name': c.name} for c in chapters]
     return JsonResponse(data, safe=False)
 
