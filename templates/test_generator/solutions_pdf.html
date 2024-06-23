@@ -12,6 +12,25 @@
 </head>
 <body>
     <h1>{{ test.name }} - Solutions</h1>
+    
+    {% comment %} <table class="table table-bordered">
+        <thead>
+            <tr>
+            </tr>
+        </thead>
+        <tbody>
+            {% for test_question in test_questions %}
+            <tr>
+                <td scope="row"><b>{{forloop.counter}}.</b> {{ test_question.question.solution }}</td>
+                <td scope="row" align="right">[{{ test_question.question.max_marks }}]</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+     {% endcomment %}
+    
+    
+    
     <ol>
         {% for test_question in test_questions %}
             <li>
