@@ -139,27 +139,27 @@
             }
         });
 
-        $('#textbook').change(function() {
-            var textbookId = $(this).val();
-            if(textbookId) {
-                $.ajax({
-                    url: '/test_generator/get_chapters/',
-                    type: 'GET',
-                    data: {'textbook_id': textbookId},
-                    success: function(data) {
-                        $('#chapter').empty();
-                        $('#chapter').append('<option value="" disabled selected>Select Chapter</option>');
-                        $.each(data, function(key, value) {
-                            $('#chapter').append('<option value="' + value.id + '">' + value.name + '</option>');
-                        });
-                    }
-                });
-            } else {
-                $('#chapter').empty();
-                $('#chapter').append('<option value="" disabled selected>Select Chapter</option>');
-            }
+        $(document).ready(function() {
+            $('#textbook').change(function() {
+                var textbookId = $(this).val();
+                if (textbookId) {
+                    $.ajax({
+                        url: 'test_generator/load_chapters/',
+                        data: {
+                            'textbook_id': textbookId
+                        },
+                        success: function(data) {
+                            $('#chapter').html('<option value="">Select Chapter</option>');
+                            $.each(data, function(key, value) {
+                                $('#chapter').append('<option value="' + value.id + '">' + value.title + '</option>');
+                            });
+                        }
+                    });
+                } else {
+                    $('#chapter').html('<option value="">Select Chapter</option>');
+                }
+            });
         });
-    });
 
     $('#addQuestionForm').submit(function(e) {
         e.preventDefault();

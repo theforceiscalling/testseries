@@ -5,8 +5,29 @@
 {% block content %}
 <h1 class="text-center my-4">Select Textbook for {{ subject.name }}</h1>
 <div class="container list-group">
-    {% for textbook in textbooks %}
-        <a href="{% url 'test_generator:chapter_selection' textbook.id %}" class="list-group-item list-group-item-action">{{ textbook.name }}</a>
-    {% endfor %}
+    <form method="POST" action="{% url 'test_generator:chapter_selection' %}" id="textbook-form">
+        {% csrf_token %}
+        <input type="hidden" name="subject_id" value="{{ subject.id }}">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th scope="col">Select</th>
+                    <th scope="col">Available Textbook/s <small>(You can select more than one textbook)</small></th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for textbook in textbooks %}
+            <tr>
+                <td scope="row"><input type="checkbox" name="textbook_ids" value="{{ textbook.id }}" id="{{textbook.id}}"></td>
+                <td scope="row"><label class="form-check-label" for="{{textbook.id}}"><h5>{{ textbook.name }}</h5></label></td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+        <button class="btn btn-primary" type="submit">Next</button>
+    </form>
+    
+
 </div>
 {% endblock %}

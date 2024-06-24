@@ -1,40 +1,58 @@
+<!-- templates/test_generator/test_detail.html -->
 {% extends 'base.html' %}
 
-{% block title %}Question Selection{% endblock %}
+{% block title %}Test Detail{% endblock %}
 
 {% block content %}
-<h1 class="text-center my-4">Select Questions for {{ chapter.name }}</h1>
-<form class="container" method="post" action="{% url 'test_generator:create_test' %}">
+<link rel="stylesheet" href="/static/style2.css">
+
+<h1 class="text-center my-4">{{ test.name }}</h1>
+<div class="container list-group-item" id="questions">
+<h3 align="center">Select Questions</h3>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th scope="col">Select</th>
+            <th scope="col">Questions</th>
+            <th scope="col">Marks</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for question in questions %}
+        <tr>
+            <td scope="row"><input align="center" class="" type="checkbox" name="questions" value="{{ question.id }}" id="question_{{ question.id }}"></td>
+            <td scope="row"><label class="form-check-label" for="question_{{ question.id }}"><h6>{{ question.question_text }} </h6><small>{{question.chapter}}</small></label></td>
+            <td scope="row" align="center">{{ question.max_marks }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<br/>
+
+<form method="POST" class="form-signin" action="{% url 'test_generator:create_test' %}">
     {% csrf_token %}
-    <input type="hidden" name="chapter_id" value="{{ chapter.id }}">
-    <table class="table">
-        <thead>
-            <tr>
-                <th scope="col">Select</th>
-                <th scope="col">Questions</th>
-                <th scope="col">Marks</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for question in questions %}
-            <tr>
-                <td scope="row"><input align="center" class="" type="checkbox" name="questions" value="{{ question.id }}" id="question_{{ question.id }}"></td>
-                <td scope="row"><label class="form-check-label" for="question_{{ question.id }}"><h5>{{ question.question_text }} </h5></label></td>
-                <td scope="row" align="center">{{ question.max_marks }}</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-    
-    
-    <div class="container form-group mt-4">
-        <label for="test_name">Test Name</label>
-        <input type="text" class="form-control" id="test_name" name="test_name" placeholder="Enter test name">
+
+    <div class="form-label-group">
+        <input name="test_name" type="text" id="testname" class="form-control" placeholder="Test Name" required autofocus>
+        <label for="testname">Test Name</label>
     </div>
-    <div class="container form-check">
-        <input class="form-check-input" type="checkbox" name="is_online" id="is_online">
-        <label class="form-check-label" for="is_online">Online Test</label>
-    </div>
-    <button type="submit" class="btn btn-primary mt-4">Create Test</button>
+
+    <div class="checkbox mb-3">
+        <label>
+          <input type="checkbox" name="is_online"> Yes, make it an Online Test as well.
+        </label>
+      </div>
+
+    <input type="hidden" name="questions" id="selected-questions">
+    <button class="btn btn-lg btn-primary btn-block" type="submit">Create My Test</button>
 </form>
+</div>
+<script>
+    document.querySelector('form[action="{% url 'test_generator:create_test' %}"]').onsubmit = function(event) {
+        const selectedQuestions = Array.from(document.querySelectorAll('input[name="questions"]:checked')).map(cb => cb.value);
+        document.getElementById('selected-questions').value = selectedQuestions.join(',');
+    };
+</script>
 {% endblock %}

@@ -5,6 +5,7 @@ from .models import Module, Class, Subject, Textbook, Chapter, Question, Test, T
 import io
 from django.template.loader import get_template
 from xhtml2pdf import pisa  # You might need to install xhtml2pdf
+from django.contrib import messages
 
 @login_required
 def module_selection(request):
@@ -30,33 +31,42 @@ def textbook_selection(request, subject_id):
     return render(request, 'test_generator/textbook_selection.html', {'subject': subject, 'textbooks': textbooks})
 
 @login_required
-def chapter_selection(request, textbook_id):
-    textbook = get_object_or_404(Textbook, pk=textbook_id)
-    chapters = Chapter.objects.filter(textbook=textbook)
-    return render(request, 'test_generator/chapter_selection.html', {'textbook': textbook, 'chapters': chapters})
+def chapter_selection(request):
+    textbook_ids = request.POST.getlist('textbook_ids')
+    textbooks = Textbook.objects.filter(id__in=textbook_ids)
+    chapters = Chapter.objects.filter(textbook__in=textbooks)
+    return render(request, 'test_generator/chapter_selection.html', {'textbooks': textbooks, 'chapters': chapters})
 
 @login_required
-def question_selection(request, chapter_id):
-    chapter = get_object_or_404(Chapter, pk=chapter_id)
-    questions = Question.objects.filter(chapter=chapter)
-    return render(request, 'test_generator/question_selection.html', {'chapter': chapter, 'questions': questions})
+def question_selection(request):
+    chapter_ids = request.POST.getlist('chapter_ids')
+    chapters = Chapter.objects.filter(id__in=chapter_ids)
+    questions = Question.objects.filter(chapter__in=chapters)
+    return render(request, 'test_generator/question_selection.html', {'chapters': chapters, 'questions': questions})
 
 @login_required
 def create_test(request):
     if request.method == 'POST':
-        user=request.user
+        user = request.user
         test_name = request.POST.get('test_name')
         is_online = 'is_online' in request.POST
-        question_ids = request.POST.getlist('questions')
-
+        question_ids_str = request.POST.get('questions')
+        
+        # Handle both comma-separated string and list format
+        if isinstance(question_ids_str, str):
+            question_ids = list(map(int, question_ids_str.split(',')))
+        else:
+            question_ids = list(map(int, question_ids_str))
+        
         test = Test.objects.create(name=test_name, is_online=is_online, added_by_user=user)
 
         for question_id in question_ids:
             question = get_object_or_404(Question, pk=question_id)
             TestQuestion.objects.create(test=test, question=question)
 
-        return redirect('test_generator:test_detail', test_id=test.id)
-
+        messages.success(request, "Test was created sucessfully! You can download Question and Solutions PDF!")
+        return redirect('test_generator:test_detail', test_id=test.id)        
+    
     return render(request, 'test_generator/create_test.html')
 
 @login_required
@@ -197,9 +207,20 @@ def get_textbooks(request):
     return JsonResponse(list(textbooks.values('id', 'name')), safe=False)
 
 def get_chapters(request):
-    textbook_id = request.GET.get('textbook_id')
-    chapters = Chapter.objects.filter(textbook_id=textbook_id)
+    textbook_ids = request.GET.getlist('textbook_ids[]')
+    chapters = Chapter.objects.filter(textbook_id__in=textbook_ids)
     data = [{'id': c.id, 'name': c.name} for c in chapters]
+    return JsonResponse(data, safe=False)
+
+def load_chapters(request):
+    textbook_id = request.GET.get('textbook_id')
+    chapters = Chapter.objects.filter(textbook_id=textbook_id).all()
+    return JsonResponse(list(chapters.values('id', 'title')), safe=False)
+
+def get_questions(request):
+    chapter_ids = request.GET.getlist('chapter_ids[]')
+    questions = Question.objects.filter(chapter_id__in=chapter_ids)
+    data = [{'id': q.id, 'text': q.question_text} for q in questions]
     return JsonResponse(data, safe=False)
 
 from django.shortcuts import render

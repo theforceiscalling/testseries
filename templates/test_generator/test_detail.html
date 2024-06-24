@@ -4,7 +4,7 @@
 {% block title %}Test Detail{% endblock %}
 
 {% block content %}
-<h1 class="text-center my-4">{{ test.name }}</h1>
+<h1 class="text-center my-4">Test: {{ test.name }}</h1>
 <div class="container list-group">
     {% for test_question in test_questions %}
         <div class="list-group-item">
