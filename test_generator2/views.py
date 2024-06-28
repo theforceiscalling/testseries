@@ -246,47 +246,57 @@ def add_question(request):
         module_id = request.POST.get('module')
         class_id = request.POST.get('class')
         subject_id = request.POST.get('subject')
+        textbook_id = request.POST.get('textbook')
         chapter_id = request.POST.get('chapter')
         question_text = request.POST.get('question')
         solution_text = request.POST.get('solution')
         max_marks = request.POST.get('max_marks')
         pyq = request.POST.get('pyq')
 
-        if not all([question_type, module_id, class_id, subject_id, chapter_id, question_text, max_marks]):
-            return JsonResponse({'error': 'Missing required fields'}, status=400)
+        module = Module.objects.get(id=module_id)
+        class_instance = Class.objects.get(id=class_id)
+        subject = Subject.objects.get(id=subject_id)
+        textbook = Textbook.objects.get(id=textbook_id)
+        chapter = Chapter.objects.get(id=chapter_id)
 
-        try:
-            module = Module.objects.get(id=module_id)
-            class_instance = Class.objects.get(id=class_id)
-            subject = Subject.objects.get(id=subject_id)
-            chapter = Chapter.objects.get(id=chapter_id)
-
-            question = Question.objects.create(
-                question_type=question_type,
-                module=module,
-                class_instance=class_instance,
-                subject=subject,
-                chapter=chapter,
-                question_text=question_text,
-                solution=solution_text,
-                added_by_user=request.user,
-                max_marks=max_marks,
-                pyq=pyq
-            )
-            return JsonResponse({'success': 'Question added successfully'})
-        except Exception as e:
-            return JsonResponse({'error': str(e)}, status=500)
+        question = Question.objects.create(
+            question_type=question_type,
+            module=module,
+            class_instance=class_instance,
+            subject=subject,
+            textbook=textbook,
+            chapter=chapter,
+            question_text=question_text,
+            solution=solution_text,
+            added_by_user=request.user,
+            max_marks=max_marks,
+            pyq=pyq
+        )
+        messages.success(request, "Question added successfully.")
+        return redirect('test_generator:add_question')  # Redirect to the same form or another page after submission
 
     modules = Module.objects.all()
     classes = Class.objects.all()
-    subjects = Subject.objects.all()
-    chapters = Chapter.objects.all()
 
     context = {
         'modules': modules,
         'classes': classes,
-        'subjects': subjects,
-        'chapters': chapters,
     }
 
     return render(request, 'test_generator/add_question.html', context)
+
+def load_subjects(request):
+    class_id = request.GET.get('class_id')
+    print(class_id)
+    subjects = Subject.objects.filter(class_instance_id=class_id).values('id', 'name')
+    return JsonResponse(list(subjects), safe=False)
+
+def load_textbooks(request):
+    subject_id = request.GET.get('subject_id')
+    textbooks = Textbook.objects.filter(subject_id=subject_id).values('id', 'name')
+    return JsonResponse(list(textbooks), safe=False)
+
+def load_chapters(request):
+    textbook_id = request.GET.get('textbook_id')
+    chapters = Chapter.objects.filter(textbook_id=textbook_id).values('id', 'name')
+    return JsonResponse(list(chapters), safe=False)

@@ -82,14 +82,13 @@
 </div>
 
 <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
-<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
 <script>
     $(document).ready(function() {
         $('#class').change(function() {
             var classId = $(this).val();
             if(classId) {
                 $.ajax({
-                    url: '/test_generator/get_subjects/',
+                    url: '/test_generator/load_subjects/',
                     type: 'GET',
                     data: {'class_id': classId},
                     success: function(data) {
@@ -118,7 +117,7 @@
             var subjectId = $(this).val();
             if(subjectId) {
                 $.ajax({
-                    url: '/test_generator/get_textbooks/',
+                    url: '/test_generator/load_textbooks/',
                     type: 'GET',
                     data: {'subject_id': subjectId},
                     success: function(data) {
@@ -139,41 +138,42 @@
             }
         });
 
-        $(document).ready(function() {
-            $('#textbook').change(function() {
-                var textbookId = $(this).val();
-                if (textbookId) {
-                    $.ajax({
-                        url: 'test_generator/load_chapters/',
-                        data: {
-                            'textbook_id': textbookId
-                        },
-                        success: function(data) {
-                            $('#chapter').html('<option value="">Select Chapter</option>');
-                            $.each(data, function(key, value) {
-                                $('#chapter').append('<option value="' + value.id + '">' + value.title + '</option>');
-                            });
-                        }
-                    });
-                } else {
-                    $('#chapter').html('<option value="">Select Chapter</option>');
-                }
-            });
+        $('#textbook').change(function() {
+            var textbookId = $(this).val();
+            if (textbookId) {
+                $.ajax({
+                    url: '/test_generator/load_chapters/',
+                    data: {
+                        'textbook_id': textbookId
+                    },
+                    success: function(data) {
+                        $('#chapter').empty();
+                        $('#chapter').append('<option value="" disabled selected>Select Chapter</option>');
+                        $.each(data, function(key, value) {
+                            $('#chapter').append('<option value="' + value.id + '">' + value.name + '</option>');
+                        });
+                    }
+                });
+            } else {
+                $('#chapter').empty();
+                $('#chapter').append('<option value="" disabled selected>Select Chapter</option>');
+            }
         });
 
-    $('#addQuestionForm').submit(function(e) {
-        e.preventDefault();
-        $.ajax({
-            type: 'POST',
-            url: '/test_generator/add_question/',
-            data: $(this).serialize(),
-            success: function(response) {
-                alert('Question added successfully!');
-                $('#addQuestionForm')[0].reset();
-            },
-            error: function(error) {
-                alert('Failed to add question. Please try again.');
-            }
+        $('#addQuestionForm').submit(function(e) {
+            e.preventDefault();
+            $.ajax({
+                type: 'POST',
+                url: '/test_generator/add_question/',
+                data: $(this).serialize(),
+                success: function(response) {
+                    alert('Question added successfully!');
+                    $('#addQuestionForm')[0].reset();
+                },
+                error: function(error) {
+                    alert('Failed to add question. Please try again.');
+                }
+            });
         });
     });
 </script>
