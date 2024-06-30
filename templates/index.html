@@ -1,5 +1,7 @@
-{% include 'header.html' %}
+{% extends 'base.html' %}
 {% block title %}TestSeries{% endblock %}
+
+{% block content %}
 <div class="container container">
   <p class="display-6" align="center">
   {% if user.is_authenticated %}  
@@ -20,4 +22,4 @@
     &nbsp;
     {% endfor %}
 </div>
-{% include 'footer.html' %}
+{% endblock %}
