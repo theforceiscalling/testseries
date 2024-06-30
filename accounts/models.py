@@ -15,12 +15,12 @@ class CustomUserManager(BaseUserManager):
         if not password:
             raise ValueError("Password is required")
         email = self.normalize_email(email)
-        user = self.model(email=email)
+        user = self.model(email=email, **extra_fields)
         # username = str("student"+phone_number)
-        user = self.model(email=email)
+        # user = self.model(email=email)
         # user = self.model(username=email)
         user.set_password(password)
-        user.save()
+        user.save(using=self._db)
         return user
     
     def create_superuser(self, email, password=None, **extra_fields):

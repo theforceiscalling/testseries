@@ -1,7 +1,7 @@
 {% include 'header.html' %}
 <title>{% block title %} {% endblock %}</title>
 {% for message in messages %}
-      <div class="container alert alert-{{message.tags}}" align="center">{{message}}</div>
+      <div class="container alert alert-{{message.tags}}" align="center"><b>{{message}}</b></div>
 {% endfor %}
 
 {% block content %}

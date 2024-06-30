@@ -148,3 +148,8 @@ EMAIL_FROM = 'support@testseries.online'
 EMAIL_HOST_USER = 'support@testseries.online'
 EMAIL_HOST_PASSWORD = 'Lopki123#'
 EMAIL_USE_TLS = False
+
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.ModelBackend',  # Keep the default backend
+    'accounts.backends.EmailBackend',  # Add your custom backend
+]

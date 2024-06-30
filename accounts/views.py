@@ -1,12 +1,14 @@
 from django.shortcuts import render, redirect
 from django.contrib import messages
-from django.contrib.auth import authenticate, login as auth_login, logout as auth_logout
+from django.contrib.auth import authenticate, login as auth_login, logout as auth_logout, get_user_model
 from django.contrib.auth.decorators import login_required
 from django.core.mail import EmailMessage
 from .models import CustomUser, user_email_verification_data
 from neetug.models import UserScore
 from neetug.models import neetug_question, neetug_option
 import random
+
+User=get_user_model()
 
 def generate_random_code():
     return ''.join(random.choices('0123456789', k=6))  # Generates random 6 digit code
@@ -19,6 +21,7 @@ def index(request):
 
 def register_user(request, is_teacher=False):
     if request.method == 'POST':
+        print(is_teacher)
         email = request.POST['email']
         password1 = request.POST['password1']
         password2 = request.POST['password2']
@@ -26,14 +29,17 @@ def register_user(request, is_teacher=False):
             if CustomUser.objects.filter(email=email).exists():
                 messages.info(request, 'Email already used')
                 return redirect('registerstudent' if not is_teacher else 'registerteacher')
-            user = CustomUser.objects.create_user(email=email, password=password1, is_teacher=is_teacher, is_student=not is_teacher)
-            user.save()
+                # print(is_teacher)
+            else:
+                user = CustomUser.objects.create_user(email=email, password=password1)
+                user.save()
+                CustomUser.objects.filter(email=email).update(is_teacher=is_teacher, is_student=not is_teacher, is_active=False)
             if not is_teacher:
                 code = generate_random_code()
                 CustomUser.objects.filter(email=email).update(is_active=False)
-                user_email_verification_data.objects.create(user=user, verification_code=code)
-                email_message = EmailMessage('TestSeries Verification', f'Your Verification code is: {code}', 'support@testseries.online', [email])
-                email_message.send()
+                user_email_verification_data.objects.create(user_id=user, verification_code=code)
+                # email_message = EmailMessage('TestSeries Verification', f'Your Verification code is: {code}', 'support@testseries.online', [email])
+                # email_message.send()
                 messages.success(request, "Account created. Check your mailbox for verification mail.")
             else:
                 messages.success(request, 'Teacher account created. Proceed to login.')
@@ -53,12 +59,13 @@ def login(request):
         email = request.POST['email']
         password = request.POST['password']
         user = authenticate(email=email, password=password)
-        if user:
+        if user is not None:
             if not user.is_active:
                 messages.warning(request, 'Account not verified. Check your mailbox for verification mail.')
-                return redirect('login')
-            auth_login(request, user)
-            return redirect('myaccount')
+                return redirect('verify')
+            else:
+                auth_login(request, user)
+                return redirect('myaccount')
         else:
             messages.warning(request, 'Invalid combination!')
             return redirect('login')
@@ -76,13 +83,23 @@ def myaccount(request):
 
 def verify(request):
     if request.method == "POST":
+        email = request.POST['email']
         code = request.POST['verification_code']
         try:
-            verification_data = user_email_verification_data.objects.get(verification_code=code)
-            verification_data.user.is_active = True
-            verification_data.user.save()
-            messages.success(request, "Account verified!")
-            return redirect('login')
+            user = CustomUser.objects.get(email=email)
+            if user is not None:
+                verification_data = user_email_verification_data.objects.get(user_id=user)
+                verification_code = verification_data.verification_code
+                if code == verification_code:
+                    CustomUser.objects.filter(email=email).update(is_active = True)
+                    messages.success(request, "Account successfully verified! You can login now.")
+                    return redirect('login')
+                else:
+                    messages.warning(request, "Verification failed!")
+                    return redirect('verify')
+            else:
+                messages.warning(request, "This account does not exist.")
+                return redirect('verify')
         except user_email_verification_data.DoesNotExist:
             messages.warning(request, "Verification failed!")
             return redirect('verify')
