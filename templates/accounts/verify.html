@@ -6,20 +6,27 @@
 {% load static %}
 <link rel="stylesheet" href="/static/style2.css">
 <div class="container container">
-<form class="form-signin" name="verification" action="" method="POST">
-    {% csrf_token %}
-    <div class="text-center mb-4">
-        <div class="form-label-group">
-            <input name="email" type="email" id="inputEmail" class="form-control" placeholder="Email" required autofocus>
-            <label for="inputEmail">Email</label>
-          </div>
+    {% if not user.is_authenticated %}  
 
-        <div class="form-label-group">
-            <input name="verification_code" type="number" id="inputverification" class="form-control" placeholder="Enter Verification Code" required>
-            <label for="inputverification">Enter Verification Code</label>
+    <form class="form-signin" name="verification" action="" method="POST">
+        {% csrf_token %}
+        <div class="text-center mb-4">
+            <div class="form-label-group">
+                <input name="email" type="email" id="inputEmail" class="form-control" placeholder="Email" required autofocus>
+                <label for="inputEmail">Email</label>
+              </div>
+    
+            <div class="form-label-group">
+                <input name="verification_code" type="number" id="inputverification" class="form-control" placeholder="Enter Verification Code" required>
+                <label for="inputverification">Enter Verification Code</label>
+            </div>
+    <button class="btn btn-lg btn-primary btn-block" type="submit">Verify</button>
         </div>
-<button class="btn btn-lg btn-primary btn-block" type="submit">Verify</button>
-    </div>
-</form>
+    </form>
+
+  {% else %} 
+  <div class="container alert alert-info" align="center">Your account is already verified.</div>
+  {% endif %}
+
 </div>
 {% endblock %}
