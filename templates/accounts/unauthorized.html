@@ -1,0 +1,9 @@
+{% extends 'base.html' %}
+
+{% block title%}Unauthorized{% endblock %}
+{% block content %}
+<div class="container container">
+    <h1 align="center" class="container alert alert-danger">Unauthorized Access Detected.</h1>
+    <div class="container alert alert-danger" align="center"><b>You do not have permission to access this page. For details, go to <a href="{% url 'myaccount' %}">My Account</a> section and navigate to Support section.</b></div>
+</div>
+{% endblock %}

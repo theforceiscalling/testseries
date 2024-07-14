@@ -1,50 +1,60 @@
 from django.shortcuts import render, get_object_or_404, redirect
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, user_passes_test
 from django.http import HttpResponse
 from .models import Module, Class, Subject, Textbook, Chapter, Question, Test, TestQuestion
 import io
 from django.template.loader import get_template
 from xhtml2pdf import pisa  # You might need to install xhtml2pdf
 from django.contrib import messages
+from accounts.decorators import teacher_required
 
-@login_required
+@teacher_required
+def index(request):
+    if request.user.is_teacher or request.user.is_superuser or request.user.is_staff:
+        messages.info(request, "Welcome to Test Generator. Here, you can create test papers for your students and make that test as online and offline.")
+    else:
+        messages.warning(request, "INDEX You do not have a verified teacher account. If you want to access this page you can request to convert your Student account into Teacher account (subjectted to approval for authenticity).")
+    
+    return render(request, 'test_generator/index.html')
+
+@teacher_required
 def module_selection(request):
     modules = Module.objects.all()
     return render(request, 'test_generator/module_selection.html', {'modules': modules})
 
-@login_required
+@teacher_required
 def class_selection(request, module_id):
     module = get_object_or_404(Module, pk=module_id)
     classes = Class.objects.filter(module=module)
     return render(request, 'test_generator/class_selection.html', {'module': module, 'classes': classes})
 
-@login_required
+@teacher_required
 def subject_selection(request, class_id):
     class_model = get_object_or_404(Class, pk=class_id)
     subjects = Subject.objects.filter(class_instance=class_model)
     return render(request, 'test_generator/subject_selection.html', {'class': class_model, 'subjects': subjects})
 
-@login_required
+@teacher_required
 def textbook_selection(request, subject_id):
     subject = get_object_or_404(Subject, pk=subject_id)
     textbooks = Textbook.objects.filter(subject=subject)
     return render(request, 'test_generator/textbook_selection.html', {'subject': subject, 'textbooks': textbooks})
 
-@login_required
+@teacher_required
 def chapter_selection(request):
     textbook_ids = request.POST.getlist('textbook_ids')
     textbooks = Textbook.objects.filter(id__in=textbook_ids)
     chapters = Chapter.objects.filter(textbook__in=textbooks)
     return render(request, 'test_generator/chapter_selection.html', {'textbooks': textbooks, 'chapters': chapters})
 
-@login_required
+@teacher_required
 def question_selection(request):
     chapter_ids = request.POST.getlist('chapter_ids')
     chapters = Chapter.objects.filter(id__in=chapter_ids)
     questions = Question.objects.filter(chapter__in=chapters)
     return render(request, 'test_generator/question_selection.html', {'chapters': chapters, 'questions': questions})
 
-@login_required
+@teacher_required
 def create_test(request):
     if request.method == 'POST':
         user = request.user
@@ -69,7 +79,7 @@ def create_test(request):
     
     return render(request, 'test_generator/create_test.html')
 
-@login_required
+@teacher_required
 def test_detail(request, test_id):
     test = get_object_or_404(Test, pk=test_id)
     test_questions = TestQuestion.objects.filter(test=test)
@@ -80,7 +90,7 @@ from django.http import HttpResponse
 from xhtml2pdf import pisa
 import io
 
-@login_required
+@teacher_required
 def download_test_pdf(request, test_id):
     test = get_object_or_404(Test, pk=test_id)
     test_questions = TestQuestion.objects.filter(test=test)
@@ -103,7 +113,7 @@ def download_test_pdf(request, test_id):
         return HttpResponse('We had some errors <pre>' + html + '</pre>')
     return response
 
-@login_required
+@teacher_required
 def download_solutions_pdf(request, test_id):
     try:
         test = get_object_or_404(Test, pk=test_id)
@@ -179,7 +189,7 @@ def download_solutions_pdf(request, test_id):
 
 #     return render(request, 'test_generator/add_question.html', context)
 
-@login_required
+@teacher_required
 def my_tests(request):
     user = request.user
     tests = Test.objects.filter(added_by_user=user)
@@ -189,34 +199,40 @@ from django.shortcuts import render
 from .models import Module, Class, Subject, Chapter
 from django.http import JsonResponse
 
+@teacher_required
 def get_classes(request):
     module_id = request.GET.get('module_id')
     classes = Class.objects.filter(module_id=module_id)
     data = [{'id': c.id, 'name': c.name} for c in classes]
     return JsonResponse(data, safe=False)
 
+@teacher_required
 def get_subjects(request):
     class_id = request.GET.get('class_id')
     subjects = Subject.objects.filter(class_instance_id=class_id)
     data = [{'id': s.id, 'name': s.name} for s in subjects]
     return JsonResponse(data, safe=False)
 
+@teacher_required
 def get_textbooks(request):
     subject_id = request.GET.get('subject_id')
     textbooks = Textbook.objects.filter(subject_id=subject_id)
     return JsonResponse(list(textbooks.values('id', 'name')), safe=False)
 
+@teacher_required
 def get_chapters(request):
     textbook_ids = request.GET.getlist('textbook_ids[]')
     chapters = Chapter.objects.filter(textbook_id__in=textbook_ids)
     data = [{'id': c.id, 'name': c.name} for c in chapters]
     return JsonResponse(data, safe=False)
 
+@teacher_required
 def load_chapters(request):
     textbook_id = request.GET.get('textbook_id')
     chapters = Chapter.objects.filter(textbook_id=textbook_id).all()
     return JsonResponse(list(chapters.values('id', 'title')), safe=False)
 
+@teacher_required
 def get_questions(request):
     chapter_ids = request.GET.getlist('chapter_ids[]')
     questions = Question.objects.filter(chapter_id__in=chapter_ids)
@@ -227,6 +243,7 @@ from django.shortcuts import render
 from django.http import JsonResponse
 from .models import Subject
 
+@teacher_required
 def update_subjects(request, class_id):
     subjects = Subject.objects.filter(class_instance_id=class_id)
     subject_options = '<option value="" disabled selected>Select Subject</option>'
@@ -239,7 +256,7 @@ def update_subjects(request, class_id):
 
 from django.http import JsonResponse
 
-@login_required
+@teacher_required
 def add_question(request):
     if request.method == 'POST':
         question_type = request.POST.get('question_type')
@@ -285,17 +302,20 @@ def add_question(request):
 
     return render(request, 'test_generator/add_question.html', context)
 
+@teacher_required
 def load_subjects(request):
     class_id = request.GET.get('class_id')
     print(class_id)
     subjects = Subject.objects.filter(class_instance_id=class_id).values('id', 'name')
     return JsonResponse(list(subjects), safe=False)
 
+@teacher_required
 def load_textbooks(request):
     subject_id = request.GET.get('subject_id')
     textbooks = Textbook.objects.filter(subject_id=subject_id).values('id', 'name')
     return JsonResponse(list(textbooks), safe=False)
 
+@teacher_required
 def load_chapters(request):
     textbook_id = request.GET.get('textbook_id')
     chapters = Chapter.objects.filter(textbook_id=textbook_id).values('id', 'name')

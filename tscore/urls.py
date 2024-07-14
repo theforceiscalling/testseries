@@ -28,4 +28,5 @@ urlpatterns = [
     path('taketest/', include('taketest.urls')),
     # path('cbsecl10/', include('cbsecl10.urls')),
     path('test_generator/', include('test_generator2.urls')),
+    path('teacher/', include('teacher.urls')),
 ]

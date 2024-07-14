@@ -65,7 +65,7 @@ ROOT_URLCONF = 'tscore.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR, 'templates', 'templates/accounts', 'templates/neetug', 'templates/plus', 'templates/testseries', 'templates/taketest'],
+        'DIRS': [BASE_DIR, 'templates', 'templates/accounts', 'templates/neetug', 'templates/plus', 'templates/testseries', 'templates/taketest', 'templates/teacher'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [

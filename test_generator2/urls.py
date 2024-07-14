@@ -6,6 +6,7 @@ app_name = 'test_generator'
 
 urlpatterns = [
     path('modules/', views.module_selection, name='module_selection'),
+    path('', views.index, name='test_generator_index'),
     path('classes/<int:module_id>/', views.class_selection, name='class_selection'),
     path('subjects/<int:class_id>/', views.subject_selection, name='subject_selection'),
     path('textbooks/<int:subject_id>/', views.textbook_selection, name='textbook_selection'),

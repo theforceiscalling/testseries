@@ -7,6 +7,7 @@ from .models import CustomUser, user_email_verification_data
 from neetug.models import UserScore
 from neetug.models import neetug_question, neetug_option
 import random
+from accounts.decorators import teacher_required
 
 User=get_user_model()
 
@@ -105,7 +106,7 @@ def verify(request):
             return redirect('verify')
     return render(request, 'verify.html')
 
-@login_required
+@teacher_required
 def addquestion(request):
     if request.method == "POST":
         data = request.POST
@@ -136,3 +137,6 @@ def addquestion(request):
 def addquestion_to_test(request):
     questions = neetug_question.objects.prefetch_related('options').all()
     return render(request, "addquestion_to_test.html", {'questions': questions})
+
+def unauthorized_access(request):
+    return render(request, 'accounts/unauthorized.html')

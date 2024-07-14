@@ -1,7 +1,8 @@
 {% extends "base.html" %}
 
+{% block title %}My Account{% endblock %}
+
 {% block content %}
-<title>My Account</title>
 <div class="container">
  Registered Email: <b>{{user.email}}</b>
  {% if user.is_student == True %}
@@ -13,9 +14,7 @@
  {% endif %}
  <br/>
  Add MCQs to NEET UG Question Bank :: <a href="add-question">Click Here</a>.<br/>
- Test Generator App Links:
-<a href="{% url 'test_generator:module_selection' %}">Test Generator App</a> | <a href="{% url 'test_generator:add_question' %}">Add Questions to Test Generator App</a> | <a href="{% url 'test_generator:my_tests' %}"> View My Tests</a>
-
+ 
 
  
  <!-- Bootstrap CSS -->
