@@ -47,10 +47,11 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     is_student = models.BooleanField(default=False) #gives students permissions
     is_teacher = models.BooleanField(default=False) #gives teacher permissions
     subscription = models.CharField(max_length=8, default="INACTIVE") #plus subscription is active or inactive
-    is_active = models.BooleanField(default=True)  # Ensure is_active is present
+    is_active = models.BooleanField(default=False)  # Ensure is_active is present
     is_staff = models.BooleanField(default=False)  # Ensure is_staff is present
     form_token = models.CharField(max_length=50, default='')  # Ensure is_staff is present
     full_name = models.CharField(max_length=100, default="", null=True)
+    account_status = models.CharField(max_length=10, null=True, blank=True)
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = []
@@ -69,3 +70,26 @@ class user_email_verification_data(models.Model):
     verification_code = models.CharField(max_length=10, default="")
     first_record_created_on = models.DateTimeField(auto_now_add=True)
     latest_record_created_on = models.DateTimeField(auto_now=True)
+
+class account_convert(models.Model):
+    request_id = models.AutoField(primary_key=True)
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    current_account_type = models.CharField(max_length=10, default="")
+    requested_account_type = models.CharField(max_length=10, default="")
+    request_status = models.CharField(max_length=10, default="Pending", choices=[
+        ('Approved', 'Approved'),
+        ('Declined', 'Declined'),
+    ])
+    declined_reason = models.CharField(max_length=500, default="Pending", choices=[
+        ('Identity Proof Expired', 'Identity Proof Expired'),
+        ('Invalid ID', 'Invalid ID'),
+        ('Uploaded ID is not clear' , 'Uploaded ID is not clear'),
+        ('Full Identity was not uploaded' , 'Full Identity was not uploaded'),
+        ('Photo not clear in Identity', 'Photo not clear in Identity'),
+        ('Mobile number not available in Identity','Mobile number not available in Identity'),
+        ('Violation of Policy', 'Violation of Policy')
+    ])
+    id_proof = models.FileField(upload_to="id_proofs/", default=None, blank=False)
+    added_on = models.DateTimeField(auto_now_add=True)
+    modified_on = models.DateTimeField(auto_now=True)
+    temp_field = models.CharField(max_length=10, default="temp")

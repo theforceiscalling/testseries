@@ -12,4 +12,5 @@ urlpatterns = [
     path('add-question', views.addquestion, name='neetug_add_question'),
     path('add-question-to-test', views.addquestion_to_test, name='add_question_to_test'),
     path('unauthorized/', views.unauthorized_access, name='unauthorized'),  
+    path('account-convert-request/', views.account_convert_request, name='account-convert-request'),
 ]

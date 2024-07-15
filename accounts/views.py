@@ -3,11 +3,12 @@ from django.contrib import messages
 from django.contrib.auth import authenticate, login as auth_login, logout as auth_logout, get_user_model
 from django.contrib.auth.decorators import login_required
 from django.core.mail import EmailMessage
-from .models import CustomUser, user_email_verification_data
+from .models import CustomUser, user_email_verification_data, account_convert
 from neetug.models import UserScore
 from neetug.models import neetug_question, neetug_option
 import random
 from accounts.decorators import teacher_required
+from django.core.files.storage import default_storage
 
 User=get_user_model()
 
@@ -22,7 +23,6 @@ def index(request):
 
 def register_user(request, is_teacher=False):
     if request.method == 'POST':
-        print(is_teacher)
         email = request.POST['email']
         password1 = request.POST['password1']
         password2 = request.POST['password2']
@@ -34,16 +34,12 @@ def register_user(request, is_teacher=False):
             else:
                 user = CustomUser.objects.create_user(email=email, password=password1)
                 user.save()
-                CustomUser.objects.filter(email=email).update(is_teacher=is_teacher, is_student=not is_teacher, is_active=False)
-            if not is_teacher:
+                CustomUser.objects.filter(email=email).update(is_teacher=is_teacher, is_student=not is_teacher)
                 code = generate_random_code()
-                CustomUser.objects.filter(email=email).update(is_active=False)
                 user_email_verification_data.objects.create(user_id=user, verification_code=code)
                 # email_message = EmailMessage('TestSeries Verification', f'Your Verification code is: {code}', 'support@testseries.online', [email])
                 # email_message.send()
                 messages.success(request, "Account created. Check your mailbox for verification mail.")
-            else:
-                messages.success(request, 'Teacher account created. Proceed to login.')
             return redirect('login')
         messages.info(request, 'Password mismatch!')
         return redirect('registerstudent' if not is_teacher else 'registerteacher')
@@ -140,3 +136,26 @@ def addquestion_to_test(request):
 
 def unauthorized_access(request):
     return render(request, 'accounts/unauthorized.html')
+
+@login_required
+def account_convert_request(request):
+    if request.user.is_teacher or request.user.is_superuser:
+        messages.warning(request, "You already have a teacher account. If you convert this account to Student account, you will not be able to convert it back to teacher account in future. Please, make sure you are aware of this.")
+    elif request.user.is_student or request.user.is_superuser:
+        messages.warning(request, "Dear User, You have a Student Account, and you are requesting for converting your student account into a teacher account. This change is irreversible.")
+        if request.method == "POST":
+            email = request.user.email
+            CustomUser.objects.filter(email=email).update(is_teacher=True, is_student=False)
+            messages.success(request, "Your account has been converted successfully.")
+            # current_account_type = request.POST['current_account_type']
+            # requested_account_type = request.POST['requested_account_type']
+            # id_proof = request.FILES['id_proof']
+            # get_request = account_convert.objects.create(user=request.user, current_account_type=current_account_type, requested_account_type=requested_account_type, id_proof=id_proof)
+            # get_request.save
+            # messages.success(request, "Your request has been submitted which is subjected to approval for authenticity.")
+            # messages.info(request, "You will receive an email in your inbox (or spam in some cases) as soon as your account migration is completed. In case you do not hear from us in 48 hours, kindly contact our support team.")
+            
+    else:
+        messages.warning(request, "An error was encountered. Error Code: #29848. Contact support team with this code for quick guidance.")        
+        
+    return render(request, 'account_convert_request.html')

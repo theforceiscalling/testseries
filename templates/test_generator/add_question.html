@@ -3,12 +3,13 @@
 {% block title %}Add Question{% endblock %}
 
 {% block content %}
-<title>Add Question</title>
-<div class="container">
-    <h2 class="card-title">Add Question</h2>
+<link rel="stylesheet" href="/static/style2.css">
 
-    <div class="container">
-        <form method="post" id="addQuestionForm">
+<div class="container">
+    <h2 align="center" class="card-title">Add Question</h2>
+
+    <div class="container container">
+        <form method="post" id="addQuestionForm" class="form-signin">
             {% csrf_token %}
 
             <div class="form-group">

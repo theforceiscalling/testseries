@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 from .forms import UploadPDFForm
-from django.utils import extract_questions_from_pdf
+# from django.utils import extract_questions_from_pdf
 
 def upload_pdf(request):
     if request.method == 'POST':
@@ -11,7 +11,7 @@ def upload_pdf(request):
             pdf_instance.save()
             
             # Extract questions from the uploaded PDF
-            extract_questions_from_pdf(pdf_instance)
+            # extract_questions_from_pdf(pdf_instance)
 
             return redirect('pdf_upload_success')  # Redirect to a success page
     else:

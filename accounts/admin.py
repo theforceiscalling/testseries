@@ -1,6 +1,6 @@
 # from django.contrib import admin
 # from django.contrib.auth.admin import UserAdmin
-from .models import CustomUser, user_email_verification_data
+from .models import CustomUser, user_email_verification_data, account_convert
 
 # # Register your models here.
 
@@ -28,6 +28,10 @@ class UserAdmin(BaseUserAdmin):
     ordering = ('email', 'username')
 
     filter_horizontal = ()
+    
+class account_convertAdmin(admin.ModelAdmin):
+    list_display=("user", "current_account_type", "requested_account_type", "request_status")
 
 admin.site.register(CustomUser,UserAdmin)
 admin.site.register(user_email_verification_data,user_email_verification_dataAdmin)
+admin.site.register(account_convert, account_convertAdmin)

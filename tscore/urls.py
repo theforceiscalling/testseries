@@ -17,6 +17,8 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from django.conf.urls import handler404
+from django.conf import settings
+from django.conf.urls.static import static
 
 handler404 = 'home.views.error_404'
 
@@ -29,4 +31,8 @@ urlpatterns = [
     # path('cbsecl10/', include('cbsecl10.urls')),
     path('test_generator/', include('test_generator2.urls')),
     path('teacher/', include('teacher.urls')),
+    path('torque/', include('torque.urls')),
 ]
+
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

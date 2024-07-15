@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+
+{% block title %}Account Convert Request{% endblock %}
+
+{% block content %}
+<link rel="stylesheet" href='/../static/style2.css'>
+
+<div class="container">  
+    <form action="" method="POST" class="form-signin" enctype="multipart/form-data">
+    {% csrf_token %}
+      <div class="text-center mb-4">
+        <h1 class="h3 mb-3 font-weight-normal">Account Convert Request</h1>
+        <p class="alert alert-info">Requirements:<br/> 
+          <code>None, as of now.</code><br/>
+        </p>
+      </div>
+
+      <div class="form-label-group">
+        <input name="email" value="{{user.email}}" type="email" id="inputEmail" class="form-control" placeholder="Email" readonly>
+        <label for="inputEmail">Registered Email</label>
+      </div>
+
+      <div class="form-label-group">
+        <input name="current_account_type" value="{% if user.is_student == True %}Student{% elif user.is_teacher == True %}Teacher{% endif %}" type="text" id="inputrole" class="form-control" placeholder="{% if user.is_student == True %}Student Account{% elif user.is_teacher == True %}Teacher Account{% endif %}" readonly>
+        <label for="inputrole">Current Account Type</label>
+      </div>
+      
+      <div class="form-label-group">
+        <input name="requested_account_type" value="{% if user.is_student == True %}Teacher{% elif user.is_teacher == True %}Student{% endif %}" type="text" id="inputrole" class="form-control" placeholder="{% if user.is_student == True %}Teacher Account{% elif user.is_teacher == True %}Student Account{% endif %}" readonly>
+        <label for="inputrole">Requested Account Type</label>
+      </div>
+
+      {% comment %} <div class="custom-file">
+        <input name="id_proof" type="file" class="custom-file-input" id="customFile">
+        <label class="custom-file-label" for="customFile">Choose ID Proof</label>
+      </div> {% endcomment %}
+      <br/><br/>
+      <button type="submit" class="btn btn-primary btn-block">Convert My Account</button>
+
+    </form>
+
+
+</div>
+{% endblock %}

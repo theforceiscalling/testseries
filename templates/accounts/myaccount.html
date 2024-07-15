@@ -9,21 +9,20 @@
  (Student Account)
  {% elif user.is_teacher == True %}
 (Teacher Account)
- {% comment %} {% elif user.is_student or user.is_teacher == False %}
- (Standard Account) {% endcomment %}
+<br/>
+Add MCQs to NEET UG Question Bank :: <a href="add-question">Click Here</a>.<br/>
+Test Generator App Links:
+<a href="{% url 'test_generator:module_selection' %}">Test Generator App</a> | <a href="{% url 'test_generator:add_question' %}">Add Questions to Test Generator App</a> | <a href="{% url 'test_generator:my_tests' %}"> View My Tests</a>
+
  {% endif %}
- <br/>
- Add MCQs to NEET UG Question Bank :: <a href="add-question">Click Here</a>.<br/>
+
+
  
 
  
  <!-- Bootstrap CSS -->
  <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-
-<div class="container mt-5">
- <h1 class="text-center">My Account</h1>
-
- <h2 class="mt-4">My Test Scores and Attempts</h2>
+<h2 align="center" class="mt-4">My Test Scores and Attempts</h2>
  <div class="table-responsive">
      <table class="table table-bordered table-striped">
          <thead class="thead-dark">

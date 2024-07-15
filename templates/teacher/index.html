@@ -5,8 +5,13 @@
 {% block content %}
 <div class="container">
     {% comment %} <h6>Hello! This is teacher account area</h6> {% endcomment %}
-    Test Generator App Links:
+{% if user.is_teacher %}
+Test Generator App Links:
 <a href="{% url 'test_generator:module_selection' %}">Test Generator App</a> | <a href="{% url 'test_generator:add_question' %}">Add Questions to Test Generator App</a> | <a href="{% url 'test_generator:my_tests' %}"> View My Tests</a>
 
+{% else %}
+<center><small>You may Request to Convert to <a href="{% url 'account-convert-request' %}">Teacher account</a></small></center>
+{% endif %}
+    
 </div>
 {% endblock %}
