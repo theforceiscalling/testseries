@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+
+{% block title %}Questions Added by Me{% endblock %}
+
+{% block content %}
+
+<h2 align="center" class="mt-4">Questions Added by Me</h2>
+ <div class="container">
+    <div align="center" class="alert alert-info">As of now, you cannot modify or delete questions/solutions.</div>
+    <div class="table-responsive">
+     <table class="table table-bordered table-striped">
+         <thead class="thead-dark">
+             <tr>
+                <th scope="col">S.No.</th> 
+                <th scope="col">Question</th>
+                 <th scope="col">Solution</th>
+             </tr>
+         </thead>
+         <tbody>
+             {% for question in ques %}
+                 <tr>
+                     <td>{{ forloop.counter }}.</td>
+                     <td>{{ question.question_text }}</td>
+                     <td>{{ question.solution }}</td>
+                 </tr>
+             {% empty %}
+                 <tr>
+                     <td colspan="3" class="text-center">No questions addded by you.</td>
+                 </tr>
+             {% endfor %}
+         </tbody>
+     </table>
+ </div>
+</div>
+
+{% endblock %}

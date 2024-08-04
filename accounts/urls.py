@@ -13,4 +13,5 @@ urlpatterns = [
     path('add-question-to-test', views.addquestion_to_test, name='add_question_to_test'),
     path('unauthorized/', views.unauthorized_access, name='unauthorized'),  
     path('account-convert-request/', views.account_convert_request, name='account-convert-request'),
+    path('questions-added-by-me/', views.questions_added_by_me, name='questions-added-by-me'),
 ]

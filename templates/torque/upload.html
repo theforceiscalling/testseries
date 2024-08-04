@@ -4,11 +4,11 @@
     <title>Upload PDF</title>
 </head>
 <body>
-    <h1>Upload PDF</h1>
+    <h2>Upload a PDF file</h2>
     <form method="post" enctype="multipart/form-data">
         {% csrf_token %}
         {{ form.as_p }}
         <button type="submit">Upload</button>
     </form>
-</body>
+    </body>
 </html>

@@ -31,7 +31,7 @@ urlpatterns = [
     # path('cbsecl10/', include('cbsecl10.urls')),
     path('test_generator/', include('test_generator2.urls')),
     path('teacher/', include('teacher.urls')),
-    path('torque/', include('torque.urls')),
+    # path('torque/', include('torque.urls')),
 ]
 
 if settings.DEBUG:

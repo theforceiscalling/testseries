@@ -159,3 +159,15 @@ def account_convert_request(request):
         messages.warning(request, "An error was encountered. Error Code: #29848. Contact support team with this code for quick guidance.")        
         
     return render(request, 'account_convert_request.html')
+
+from test_generator2.models import Question
+
+@teacher_required
+def questions_added_by_me(request):
+    ques = Question.objects.filter(added_by_user=request.user)
+    
+    context = {
+        'ques': ques
+    }
+    
+    return render(request, 'questions_added_by_me.html', context)

@@ -1,0 +1,6 @@
+<h2>Choose Processing Type</h2>
+<form method="post">
+    {% csrf_token %}
+    <button type="submit" name="processing_type" value="text">Text-Based PDF</button>
+    <button type="submit" name="processing_type" value="image">Image-Based PDF</button>
+</form>

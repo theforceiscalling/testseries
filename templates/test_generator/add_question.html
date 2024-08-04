@@ -9,13 +9,14 @@
     <h2 align="center" class="card-title">Add Question</h2>
 
     <div class="container container">
-        <form method="post" id="addQuestionForm" class="form-signin">
+        <form method="POST" id="addQuestionForm" class="form-signin" enctype="multipart/form-data">
             {% csrf_token %}
-
+            {{ form.as_p }}
+    
             <div class="form-group">
-                <label for="question_type">Select Question type</label>
+                <label for="question_type"></label>
                 <select id="question_type" name="question_type" class="form-control" required>
-                    <option value="" disabled selected>Question type</option>
+                    <option value="" disabled selected>Select Question type</option>
                     <option value="theory">Theory</option>
                     <option value="mcq">MCQ</option>
                     <option value="assertion_reason">Assertion and Reason</option>
@@ -24,7 +25,7 @@
             </div>
 
             <div class="form-group">
-                <label for="module">Select Module</label>
+                <label for="module"></label>
                 <select id="module" name="module" class="form-control" required>
                     <option value="" disabled selected>Select Module</option>
                     {% for module in modules %}
@@ -33,7 +34,7 @@
                 </select>
             </div>
             <div class="form-group">
-                <label for="class">Select Class</label>
+                <label for="class"></label>
                 <select id="class" name="class" class="form-control" required onchange="updateSubjects()">
                     <option value="" disabled selected>Select Class</option>
                     {% for class in classes %}
@@ -42,33 +43,45 @@
                 </select>
             </div>
             <div class="form-group">
-                <label for="subject">Select Subject</label>
+                <label for="subject"></label>
                 <select id="subject" name="subject" class="form-control" required>
                     <option value="" disabled selected>Select Subject</option>
                 </select>
             </div>
 
             <div class="form-group">
-                <label for="textbook">Select Textbook</label>
+                <label for="textbook"></label>
                 <select id="textbook" name="textbook" class="form-control" required>
                     <option value="" disabled selected>Select Textbook</option>
                 </select>
             </div>
 
             <div class="form-group">
-                <label for="chapter">Select Chapter</label>
+                <label for="chapter"></label>
                 <select id="chapter" name="chapter" class="form-control" required>
                     <option value="" disabled selected>Select Chapter</option>
                 </select>
             </div>
-            <div class="form-group">
-                <label for="question">Question</label>
-                <textarea id="question" name="question" class="form-control" rows="3" required></textarea>
+            <div class="form-label-group">
+                <label for="question"></label>
+                <textarea id="question" name="question" class="form-control" rows="3" placeholder="Question text" required></textarea>
             </div>
-            <div class="form-group">
-                <label for="solution">Solution</label>
-                <textarea id="solution" name="solution" class="form-control" rows="3" required></textarea>
+
+            <div class="custom-file">
+                <input name="question_diagram_or_illustration" type="file" class="custom-file-input" id="questionFile">
+                <label class="custom-file-label" for="questionFile">Diagram for Question (Optional)</label>
             </div>
+
+            <div class="form-label-group">
+                <label for="solution"></label>
+                <textarea id="solution" name="solution" class="form-control" rows="3" placeholder="Solution text" required></textarea>
+            </div>
+            
+            <div class="custom-file">
+                <input name="solution_diagram_or_illustration" type="file" class="custom-file-input" id="solutionFile">
+                <label class="custom-file-label" for="solutionFile">Diagram for Solution (Optional)</label>
+            </div>
+            
             <div class="form-group">
                 <label for="max_marks">Maximum Marks</label>
                 <input type="number" id="max_marks" name="max_marks" class="form-control" required>
@@ -79,12 +92,24 @@
             </div>
             <button type="submit" class="btn btn-primary btn-block">Add Question</button>
         </form>
+        {% if form.errors %}
+        <ul>
+        {% for field in form %}
+            {% for error in field.errors %}
+                <li>{{ error }}</li>
+            {% endfor %}
+        {% endfor %}
+        </ul>
+    {% endif %}
+    
     </div>
 </div>
 
 <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
 <script>
     $(document).ready(function() {
+        let isSubmitting = false;
+
         $('#class').change(function() {
             var classId = $(this).val();
             if(classId) {
@@ -162,17 +187,25 @@
         });
 
         $('#addQuestionForm').submit(function(e) {
-            e.preventDefault();
+            e.preventDefault();  // Prevent default form submission
+            if (isSubmitting) return;  // Prevent multiple submissions
+            isSubmitting = true;
+
+            var formData = new FormData(this);  // Use FormData to include file uploads
             $.ajax({
                 type: 'POST',
                 url: '/test_generator/add_question/',
-                data: $(this).serialize(),
+                data: formData,
+                contentType: false,  // Required for FormData
+                processData: false,  // Required for FormData
                 success: function(response) {
                     alert('Question added successfully!');
                     $('#addQuestionForm')[0].reset();
+                    isSubmitting = false;
                 },
                 error: function(error) {
                     alert('Failed to add question. Please try again.');
+                    isSubmitting = false;
                 }
             });
         });

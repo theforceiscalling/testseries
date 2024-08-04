@@ -7,6 +7,8 @@ from django.template.loader import get_template
 from xhtml2pdf import pisa  # You might need to install xhtml2pdf
 from django.contrib import messages
 from accounts.decorators import teacher_required
+from django.core.files.storage import default_storage
+
 
 @teacher_required
 def index(request):
@@ -259,6 +261,8 @@ from django.http import JsonResponse
 @teacher_required
 def add_question(request):
     if request.method == 'POST':
+        print("Form submission received.")
+        
         question_type = request.POST.get('question_type')
         module_id = request.POST.get('module')
         class_id = request.POST.get('class')
@@ -266,31 +270,43 @@ def add_question(request):
         textbook_id = request.POST.get('textbook')
         chapter_id = request.POST.get('chapter')
         question_text = request.POST.get('question')
+        question_diagram_or_illustration = request.FILES.get('question_diagram_or_illustration')
         solution_text = request.POST.get('solution')
+        solution_diagram_or_illustration = request.FILES.get('solution_diagram_or_illustration')
         max_marks = request.POST.get('max_marks')
         pyq = request.POST.get('pyq')
 
-        module = Module.objects.get(id=module_id)
-        class_instance = Class.objects.get(id=class_id)
-        subject = Subject.objects.get(id=subject_id)
-        textbook = Textbook.objects.get(id=textbook_id)
-        chapter = Chapter.objects.get(id=chapter_id)
+        print("Files received:", question_diagram_or_illustration, solution_diagram_or_illustration)
 
-        question = Question.objects.create(
-            question_type=question_type,
-            module=module,
-            class_instance=class_instance,
-            subject=subject,
-            textbook=textbook,
-            chapter=chapter,
-            question_text=question_text,
-            solution=solution_text,
-            added_by_user=request.user,
-            max_marks=max_marks,
-            pyq=pyq
-        )
-        messages.success(request, "Question added successfully.")
-        return redirect('test_generator:add_question')  # Redirect to the same form or another page after submission
+        try:
+            module = Module.objects.get(id=module_id)
+            class_instance = Class.objects.get(id=class_id)
+            subject = Subject.objects.get(id=subject_id)
+            textbook = Textbook.objects.get(id=textbook_id)
+            chapter = Chapter.objects.get(id=chapter_id)
+
+            question = Question.objects.create(
+                question_type=question_type,
+                module=module,
+                class_instance=class_instance,
+                subject=subject,
+                textbook=textbook,
+                chapter=chapter,
+                question_text=question_text,
+                question_diagram_or_illustration=question_diagram_or_illustration,
+                solution=solution_text,
+                solution_diagram_or_illustration=solution_diagram_or_illustration,
+                added_by_user=request.user,
+                max_marks=max_marks,
+                pyq=pyq
+            )
+            question.save()
+            messages.success(request, "Question added successfully.")
+        except Exception as e:
+            print("Error while saving question:", str(e))
+            messages.error(request, "Failed to add question. Please try again.")
+
+        return redirect('test_generator:add_question')
 
     modules = Module.objects.all()
     classes = Class.objects.all()
